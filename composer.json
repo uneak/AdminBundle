@@ -1,0 +1,29 @@
+{
+    "name": "uneak/admin-bundle",
+    "type": "symfony-bundle",
+    "description": "Symfony AdminBundle",
+    "keywords": ["admin", "backoffice", "route", "block"],
+    "homepage": "https://github.com/uneak/AdminBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Marc Galoyer",
+            "email": "mgaloyer@uneak.fr",
+            "homepage": "http://www.uneak.fr"
+        }
+    ],
+    
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/framework-bundle": "~2.1",
+        "twig/twig": "~1.5"
+    },
+    "require-dev": {
+        "symfony/yaml": "~2.1"
+    },
+    "autoload": {
+        "psr-0": { "Uneak\\AdminBundle": "" }
+    },
+    "target-dir": "Uneak/AdminBundle",
+    "minimum-stability": "dev"
+}
