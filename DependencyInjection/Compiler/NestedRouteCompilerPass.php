@@ -33,8 +33,8 @@ class NestedRouteCompilerPass implements CompilerPassInterface {
 		//	KNP MENU
 		//
 		
-		$knp_menu_factory_definition = $container->getDefinition('knp_menu.factory');
-		$knp_menu_factory_definition->setClass('Uneak\AdminBundle\KnpMenu\MenuFactory');
+//		$knp_menu_factory_definition = $container->getDefinition('knp_menu.factory');
+//		$knp_menu_factory_definition->setClass('Uneak\AdminBundle\KnpMenu\MenuFactory');
 	}
 
 }
