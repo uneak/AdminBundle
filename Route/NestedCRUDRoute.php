@@ -19,17 +19,12 @@ class NestedCRUDRoute extends NestedAdminRoute {
 		$this->buildCRUD();
 	}
 
-	public function buildCRUD() {
+	protected function buildCRUD() {
 
-		$indexRoute = new NestedAdminRoute('index');
+		$indexRoute = new NestedGridRoute('index');
 		$indexRoute->setPath('list');
 		$indexRoute->setAction('index');
 		$this->addChild($indexRoute);
-
-		$gridRoute = new NestedGridRoute('_grid');
-		$gridRoute->setPath('_grid');
-		$gridRoute->setAction('grid');
-		$indexRoute->addChild($gridRoute);
 
 		$newRoute = new NestedAdminRoute('new');
 		$newRoute->setPath('new');

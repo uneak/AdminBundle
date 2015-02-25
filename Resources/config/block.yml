@@ -22,5 +22,11 @@ services:
         class: %uneak.admin.block.twig.extension.class%
         arguments:
             - @uneak.admin.block.manager
+            - @twig
         tags:
             - { name: twig.extension }
+
+    twig.stringloader:
+        class: Twig_Loader_String
+        tags:
+            - { name: twig.loader }

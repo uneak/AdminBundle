@@ -12,6 +12,23 @@ class BlockChain {
 		$this->blocks = array();
 	}
 
+
+	public function getExternalFiles($group = null) {
+		$array = array();
+		foreach ($this->blocks as $block) {
+			$array = array_merge($array, $block['block']->getExternalFiles($group));
+		}
+		return $array;
+	}
+
+	public function getScripts($group = null) {
+		$array = array();
+		foreach ($this->blocks as $block) {
+			$array = array_merge($array, $block['block']->getScripts($group));
+		}
+		return $array;
+	}
+
 	public function addBlock($id, BlockInterface $block, $priority) {
 		$this->blocks[$id] = array('block' => $block, 'priority' => $priority);
 		uasort($this->blocks, array($this, "_cmp"));

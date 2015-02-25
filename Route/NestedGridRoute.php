@@ -4,14 +4,21 @@ namespace Uneak\AdminBundle\Route;
 
 use Uneak\AdminBundle\Route\NestedRoute;
 
-class NestedGridRoute extends NestedRoute {
+class NestedGridRoute extends NestedAdminRoute {
 
 	protected $actions = array();
 	protected $rowActions = array();
-	protected $cols = array();
+	protected $columns = array();
+	protected $gridRoute;
 
 	public function __construct($id) {
 		parent::__construct($id);
+
+		$this->gridRoute = new NestedRoute('_grid');
+		$this->gridRoute->setPath('_grid');
+		$this->gridRoute->setAction('grid');
+		$this->addChild($this->gridRoute);
+
 	}
 
 	public function getGridRoute() {
@@ -44,13 +51,13 @@ class NestedGridRoute extends NestedRoute {
 		return $this->rowActions;
 	}
 
-	public function addCol($array) {
-		$this->cols[] = $array;
+	public function addColumn($array) {
+		$this->columns[] = $array;
 		return $this;
 	}
 
-	public function getCols() {
-		return $this->cols;
+	public function getColumns() {
+		return $this->columns;
 	}
 
 }

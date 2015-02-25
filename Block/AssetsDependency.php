@@ -1,27 +1,21 @@
 <?php
+	/**
+	 * Created by PhpStorm.
+	 * User: marc
+	 * Date: 30/01/15
+	 * Time: 08:54
+	 */
 
 	namespace Uneak\AdminBundle\Block;
 
-	abstract class Block implements BlockInterface, AssetsDependencyInterface {
 
-		protected $title;
-		protected $template;
-		protected $metas;
-		protected $externalFiles = array();
-		protected $scripts = array();
+	class AssetsDependency {
+		protected $externalFiles;
+		protected $scripts;
 
 		public function __construct() {
-			$this->metas = new Meta($this);
-			$this->_registerExternalFile();
-			$this->_registerScript();
-		}
-
-		protected function _registerExternalFile() {
-
-		}
-
-		protected function _registerScript() {
-
+			$this->externalFiles = array();
+			$this->scripts = array();
 		}
 
 		public function addExternalFile(ExternalFile $externalFile) {
@@ -42,15 +36,14 @@
 		public function getExternalFiles($group = null) {
 			$array = array();
 			foreach ($this->externalFiles as $externalFile) {
-				if ($group) {
-					if ($externalFile->getGroup() == $group) {
-						$array[$externalFile->getSrc()] = $externalFile;
-					}
+				if ($group && $externalFile->getGroup() == $group) {
+					array_push($array, $externalFile);
 				} else {
-					$array[$externalFile->getSrc()] = $externalFile;
+					array_push($array, $externalFile);
 				}
 			}
 
+			usort($array, array($this, "cmpByPriority"));
 
 			return $array;
 		}
@@ -76,18 +69,17 @@
 			return $this;
 		}
 
-		public function getScripts($group = null) {
+		public function getScripts() {
 			$array = array();
 			foreach ($this->scripts as $scripts) {
-				if ($group) {
-					if ($scripts->getGroup() == $group) {
-						array_push($array, $scripts);
-					}
+				if ($group && $scripts->getGroup() == $group) {
+					array_push($array, $scripts);
 				} else {
 					array_push($array, $scripts);
 				}
 			}
 
+			usort($array, array($this, "cmpByPriority"));
 
 			return $array;
 		}
@@ -98,38 +90,11 @@
 			return $this;
 		}
 
-		public function getMetas() {
-			return $this->metas;
+		private function cmpByPriority($a, $b) {
+			if ($a->getPriority() == $b->getPriority()) {
+				return 0;
+			}
+
+			return ($a->getPriority() < $b->getPriority()) ? -1 : 1;
 		}
-
-		public function getMeta($key) {
-			return $this->metas->__get($key);
-		}
-
-		public function setMeta($key, $value) {
-			$this->metas->__set($key, $value);
-			return $this;
-		}
-
-		public function getTemplate() {
-			return $this->template;
-		}
-
-		public function setTemplate($template) {
-			$this->template = $template;
-
-			return $this;
-		}
-
-		public function getTitle() {
-			return $this->title;
-		}
-
-		public function setTitle($title) {
-			$this->title = $title;
-
-			return $this;
-		}
-
-
 	}
