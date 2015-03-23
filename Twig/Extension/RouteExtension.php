@@ -37,59 +37,25 @@
 		}
 
 		public function routeMetaDataFunction($key, $flattenRoute = null) {
-			if (!$flattenRoute) {
-				$flattenRoute = $this->routePool->getRoute();
-			} else if (is_string($flattenRoute)) {
-				$flattenRoute = $this->routePool->findRoute($flattenRoute);
-			}
-
-			return $flattenRoute->getMetaData($key);
+			return $this->routePool->getRouteMetaData($key, $flattenRoute);
 		}
-
 
 		public function routeCrudIdFunction($path = null) {
-			$crud = $this->routePool->getCrud();
-
-			return $this->_findRouteId($crud, $path);
-		}
-
-		private function _findRouteId(FlattenRoute $flattenRoute, $path = null) {
-			return ($path) ? $flattenRoute->getId() . '.' . $path : $flattenRoute->getId();
-		}
-
-		public function routeIdFunction($path = null) {
-			$route = $this->routePool->getRoute();
-
-			return $this->_findRouteId($route, $path);
+			return $this->routePool->getRouteCrudId($path);
 		}
 
 		public function routeCrudPathFunction($path = null, $parameters = array()) {
-			$crud = $this->routePool->getCrud();
-			$mergedParameters = array_merge($this->_routeParameters($crud), $parameters);
-
-			return $this->_findRoutePath($crud, $path, $mergedParameters);
+			return $this->routePool->getRouteCrudPath($path, $parameters);
 		}
 
-		private function _routeParameters(FlattenRoute $flattenRoute) {
-			$parameters = array();
-			$params = $flattenRoute->getParameters();
-			foreach ($params as $key => $param) {
-				$parameters[$key] = $this->routePool->findRoute($param)->getParameterValue();
-			}
-
-			return $parameters;
-		}
-
-		private function _findRoutePath(FlattenRoute $flattenRoute, $path = null, $parameters = array()) {
-			return $this->router->generate($this->_findRouteId($flattenRoute, $path), $parameters);
+		public function routeIdFunction($path = null) {
+			return $this->routePool->getRouteId($path);
 		}
 
 		public function routePathFunction($path = null, $parameters = array()) {
-			$route = $this->routePool->getRoute();
-			$mergedParameters = array_merge($this->_routeParameters($route), $parameters);
-
-			return $this->_findRoutePath($route, $path, $mergedParameters);
+			return $this->routePool->getRoutePath($path, $parameters);
 		}
+
 
 		public function getGlobals() {
 			$route = $this->routePool->getRoute();
@@ -100,7 +66,8 @@
 					//            'routeIcon' => $route->getIcon(),
 					//            'routeLabel' => $route->getLabel(),
 					//            'routeDescription' => $route->getDescription(),
-					'routePath' => $this->router->generate($route->getId(), $this->_routeParameters($this->routePool->getRoute())),
+					//'routePath' => $this->router->generate($route->getId(), $this->_routeParameters($this->routePool->getRoute())),
+					'routePath' => $this->routePool->getRoutePath(),
 				)
 			);
 		}
