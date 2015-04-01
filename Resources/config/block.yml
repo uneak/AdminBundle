@@ -7,16 +7,6 @@ services:
 
     uneak.admin.block.manager:
         class: %uneak.admin.block.manager.class%
-            
-    uneak.admin.block.controller.listener:
-        class: %uneak.admin.block.controller.listener.class%
-        arguments:
-            - @uneak.admin.block.manager
-            - @router
-            - @twig
-
-        tags:
-            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
 
     uneak.admin.block.twig.extension:
         class: %uneak.admin.block.twig.extension.class%

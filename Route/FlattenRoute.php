@@ -8,9 +8,6 @@
 		protected $nestedRoute;
 		protected $enabled;
 		protected $metaDatas;
-		//    protected $icon;
-		//    protected $label;
-		//    protected $description;
 		protected $crud;
 		protected $parameters = array();
 
@@ -25,14 +22,11 @@
 			parent::buildArray($array);
 			$this->nestedRoute = (isset($array['nested_route'])) ? $array['nested_route'] : null;
 			$this->enabled = (isset($array['enabled'])) ? $array['enabled'] : '';
-			$this->children = (isset($array['children'])) ? $array['children'] : array();
+//			$this->children = (isset($array['children'])) ? $array['children'] : array();
 			$this->parameters = (isset($array['parameters'])) ? $array['parameters'] : array();
 			$this->parent = (isset($array['parent'])) ? $array['parent'] : '';
 			$this->slug = (isset($array['slug'])) ? $array['slug'] : '';
 			$this->metaDatas = (isset($array['meta_datas'])) ? $array['meta_datas'] : array();
-			//        $this->icon = (isset($array['icon'])) ? $array['icon'] : '';
-			//        $this->label = (isset($array['label'])) ? $array['label'] : null;
-			//        $this->description = (isset($array['description'])) ? $array['description'] : null;
 			$this->crud = (isset($array['crud'])) ? $array['crud'] : '';
 		}
 
@@ -49,33 +43,6 @@
 		function getMetaData($key) {
 			return $this->metaDatas[$key];
 		}
-
-		//    function setIcon($icon) {
-		//        $this->icon = $icon;
-		//        return $this;
-		//    }
-		//
-		//    function getIcon() {
-		//        return $this->icon;
-		//    }
-		//
-		//    function setLabel($label) {
-		//        $this->label = $label;
-		//        return $this;
-		//    }
-		//
-		//    function getLabel() {
-		//        return $this->label;
-		//    }
-		//
-		//    function setDescription($description) {
-		//        $this->description = $description;
-		//        return $this;
-		//    }
-		//
-		//    function getDescription() {
-		//        return $this->description;
-		//    }
 
 		function setMetaData($key, $value) {
 			$this->metaDatas[$key] = $value;
@@ -108,8 +75,14 @@
 			$child->setParent($this);
 		}
 
-		public function getChild($id) {
-			return $this->children[$id];
+		public function getChild($path) {
+			$paths = explode(".", $path);
+			$path = array_shift($paths);
+			if (count($paths) > 0) {
+				return $this->children[$path]->getChild(implode(".", $paths));
+			} else {
+				return $this->children[$path];
+			}
 		}
 
 		function getSlug() {
@@ -118,7 +91,6 @@
 
 		public function setParent(FlattenRoute $parent) {
 			$this->parent = $parent;
-
 			return $this;
 		}
 
@@ -130,13 +102,10 @@
 			$array = parent::getArray();
 			$array['nested_route'] = $this->nestedRoute;
 			$array['enabled'] = $this->enabled;
-			$array['children'] = $this->children;
+//			$array['children'] = $this->children;
 			$array['parent'] = $this->parent;
 			$array['slug'] = $this->slug;
 			$array['meta_datas'] = $this->metaDatas;
-			//        $array['icon'] = $this->icon;
-			//        $array['label'] = $this->label;
-			//        $array['description'] = $this->description;
 			$array['crud'] = $this->crud;
 			$array['parameters'] = $this->parameters;
 

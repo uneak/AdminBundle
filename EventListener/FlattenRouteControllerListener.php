@@ -5,6 +5,7 @@ namespace Uneak\AdminBundle\EventListener;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Twig_Environment;
+use Uneak\AdminBundle\Block\BlockManager;
 use Uneak\AdminBundle\Twig\Extension\PoolExtension;
 use Uneak\AdminBundle\Route\FlattenRoute;
 use Uneak\AdminBundle\Route\FlattenParameterRoute;
@@ -15,16 +16,19 @@ use Uneak\AdminBundle\Twig\Extension\RouteExtension;
 
 class FlattenRouteControllerListener {
 
+
     private $flattenRoutePool;
     private $router;
     private $twig;
     private $em;
+	private $blockManager;
 
-    public function __construct(FlattenRoutePool $flattenRoutePool, Router $router, Twig_Environment $twig, EntityManager $em) {
+    public function __construct(FlattenRoutePool $flattenRoutePool, Router $router, Twig_Environment $twig, EntityManager $em, BlockManager $blockManager) {
         $this->flattenRoutePool = $flattenRoutePool;
         $this->router = $router;
         $this->twig = $twig;
         $this->em = $em;
+		$this->blockManager = $blockManager;
     }
 
     public function onKernelController(FilterControllerEvent $event) {
@@ -53,12 +57,14 @@ class FlattenRouteControllerListener {
 
 
             $request->attributes->set('routePool', $this->flattenRoutePool);
+			$request->attributes->set('blockManager', $this->blockManager);
 
 //			$poolParameters = new PoolExtension('flatten_route');
 //			$poolParameters->addParameter('flattenRoutePool', $this->flattenRoutePool);
 //			$this->twig->addExtension($poolParameters);
 
-            $this->twig->addExtension(new RouteExtension($this->router, $this->flattenRoutePool));
+            $this->twig->addExtension(new RouteExtension($this->flattenRoutePool));
+
         }
     }
 

@@ -8,4 +8,5 @@ interface BlockInterface {
     public function setTemplate($template);
     public function getTitle();
     public function setTitle($title);
+    public function preRender();
 }

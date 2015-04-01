@@ -2,6 +2,8 @@
 
 namespace Uneak\AdminBundle\Route;
 
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
 class FlattenRoutePool {
 
 	protected $parameters = array();
@@ -10,7 +12,7 @@ class FlattenRoutePool {
 	protected $crud;
 	private $routeCollection;
 
-	public function __construct($router) {
+	public function __construct(UrlGeneratorInterface $router) {
 		$this->router = $router;
 		$this->routeCollection = $this->router->getRouteCollection();
 	}
@@ -21,12 +23,12 @@ class FlattenRoutePool {
 		return $this;
 	}
 
-	public function getRoute() {
-		return $this->route;
+	public function getRoute($path = null) {
+		return ($path) ? $this->routeCollection->get($this->route->getId() . '.' . $path) : $this->route;
 	}
 
-	public function getCrud() {
-		return $this->crud;
+	public function getCrud($path = null) {
+		return ($path) ? $this->routeCollection->get($this->crud->getId() . '.' . $path) : $this->crud;
 	}
 
 
@@ -34,22 +36,35 @@ class FlattenRoutePool {
 		return $this->routeCollection->get($path);
 	}
 
-	public function getRoutePath($path = null, $parameters = array()) {
-		$mergedParameters = array_merge($this->_routeParameters($this->route), $parameters);
-		return $this->_findRoutePath($this->route, $path, $mergedParameters);
+	public function findRouteId(FlattenRoute $flattenRoute, $path = null) {
+		return ($path) ? $flattenRoute->getId() . '.' . $path : $flattenRoute->getId();
 	}
 
+	public function findRoutePath(FlattenRoute $flattenRoute, $path = null, $parameters = array()) {
+		return $this->router->generate($this->findRouteId($flattenRoute, $path), $parameters);
+	}
+
+	public function getRoutePath($path = null, $parameters = array()) {
+		$mergedParameters = array_merge($this->_routeParameters($this->route), $parameters);
+		return $this->findRoutePath($this->route, $path, $mergedParameters);
+	}
+
+
+
+
+
+
 	public function getRouteId($path = null) {
-		return $this->_findRouteId($this->route, $path);
+		return $this->findRouteId($this->route, $path);
 	}
 
 	public function getRouteCrudPath($path = null, $parameters = array()) {
 		$mergedParameters = array_merge($this->_routeParameters($this->crud), $parameters);
-		return $this->_findRoutePath($this->crud, $path, $mergedParameters);
+		return $this->findRoutePath($this->crud, $path, $mergedParameters);
 	}
 
 	public function getRouteCrudId($path = null) {
-		return $this->_findRouteId($this->crud, $path);
+		return $this->findRouteId($this->crud, $path);
 	}
 
 
@@ -97,13 +112,9 @@ class FlattenRoutePool {
 		return $parameters;
 	}
 
-	private function _findRoutePath(FlattenRoute $flattenRoute, $path = null, $parameters = array()) {
-		return $this->router->generate($this->_findRouteId($flattenRoute, $path), $parameters);
-	}
 
-	private function _findRouteId(FlattenRoute $flattenRoute, $path = null) {
-		return ($path) ? $flattenRoute->getId() . '.' . $path : $flattenRoute->getId();
-	}
+
+
 
 
 }

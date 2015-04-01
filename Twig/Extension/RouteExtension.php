@@ -10,11 +10,9 @@
 	class RouteExtension extends Twig_Extension {
 
 		private $environment;
-		private $router;
 		private $routePool;
 
-		public function __construct(Router $router, FlattenRoutePool $routePool) {
-			$this->router = $router;
+		public function __construct(FlattenRoutePool $routePool) {
 			$this->routePool = $routePool;
 		}
 
@@ -63,10 +61,6 @@
 			return \array_merge($route->getMetaDatas(), array(
 					'route'     => $route,
 					'routePool' => $this->routePool,
-					//            'routeIcon' => $route->getIcon(),
-					//            'routeLabel' => $route->getLabel(),
-					//            'routeDescription' => $route->getDescription(),
-					//'routePath' => $this->router->generate($route->getId(), $this->_routeParameters($this->routePool->getRoute())),
 					'routePath' => $this->routePool->getRoutePath(),
 				)
 			);

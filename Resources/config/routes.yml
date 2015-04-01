@@ -32,6 +32,7 @@ services:
             - @router
             - @twig
             - @doctrine.orm.entity_manager
+            - @uneak.admin.block.manager
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
             
@@ -48,7 +49,7 @@ services:
             - @uneak.admin.route.cache
             - @uneak.admin.route.nested.manager
         tags:
-            - { name: kernel.cache_warmer }
+            - { name: kernel.cache_warmer, priority: 30 }
 
     uneak.admin.route.loader:
         class: %uneak.admin.route.loader.class%

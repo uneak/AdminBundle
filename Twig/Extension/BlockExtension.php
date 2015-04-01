@@ -41,7 +41,10 @@ class BlockExtension extends Twig_Extension {
 		}
 
 		if ($block instanceof BlockInterface) {
+
+			$block->preRender();
 			return $this->environment->render($block->getTemplate(), array('item' => $block));
+
 		} else {
 			return '#ERROR : block not found';
 		}
@@ -82,9 +85,10 @@ class BlockExtension extends Twig_Extension {
 		$htmls = array();
 		$blocks = $this->blockManager->getBlocks($group);
 		foreach ($blocks as $block) {
+
 			$htmls[] = $this->blockFunction($block);
 		}
-//		$html = implode("<hr class='separator' />", $htmls);
+
 		$html = implode($separator, $htmls);
 
 		return $html;

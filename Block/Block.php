@@ -16,6 +16,9 @@
 			$this->_registerScript();
 		}
 
+		public function preRender() {
+		}
+
 		protected function _registerExternalFile() {
 
 		}

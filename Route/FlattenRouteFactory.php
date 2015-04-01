@@ -39,7 +39,54 @@ class FlattenRouteFactory {
 		),
 	);
 
+
+	public function getRouteStruct(NestedRoute $nestedRoute, $data = array()) {
+		$definition = $this->getDefinition($nestedRoute->getNestedType());
+		foreach ($definition['functions'] as $function) {
+			call_user_func_array(array($this, 'b' . $function), array($nestedRoute, &$data));
+		}
+
+		$struct = array_merge_recursive($data, array(
+			'class' => $definition['flatten'],
+			'enabled' => $nestedRoute->isEnabled(),
+			'slug' => $nestedRoute->getId(),
+			'children' => array(),
+		));
+
+		foreach ($nestedRoute->getChildren() as $nestedChild) {
+			$struct['children'][] = $this->getRouteStruct($nestedChild, $data);
+		}
+
+		return $struct;
+	}
+
+	public function buildFlattenRoute($struct) {
+		$class = $struct['class'];
+		$flattenRoute = new $class($struct);
+		foreach ($struct['children'] as $cStruct) {
+			$cFlattenRoute = $this->buildFlattenRoute($cStruct);
+			$flattenRoute->addChild($cFlattenRoute);
+		}
+		return $flattenRoute;
+	}
+
+	public function getRoutes($flattenRoute) {
+		$routes = array();
+		$routes[$flattenRoute->getId()] = $flattenRoute;
+		foreach ($flattenRoute->getChildren() as $flattenChild) {
+			$routes = array_merge($routes, $this->getRoutes($flattenChild));
+		}
+		return $routes;
+	}
+
 	public function getFlattenRoutes(NestedRoute $nestedRoute, $data = array()) {
+		$struct = $this->getRouteStruct($nestedRoute, $data);
+		$flattenRoute = $this->buildFlattenRoute($struct);
+		return $this->getRoutes($flattenRoute);
+	}
+
+
+	public function OLD_getFlattenRoutes(NestedRoute $nestedRoute, $data = array()) {
 		$definition = $this->getDefinition($nestedRoute->getNestedType());
 		foreach ($definition['functions'] as $function) {
 			call_user_func_array(array($this, 'b' . $function), array($nestedRoute, &$data));
