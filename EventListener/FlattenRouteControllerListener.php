@@ -41,8 +41,8 @@ class FlattenRouteControllerListener {
             $this->flattenRoutePool->setRoute($route);
             $routeParams = $request->attributes->get('_route_params');
 
-            foreach ($route->getParameters() as $key => $path) {
-                $paramRoute = $routeCollection->get($path);
+            foreach ($route->getParameters() as $key => $paramRoute) {
+
                 $paramRoute->setParameterValue($routeParams[$key]);
 
                 if ($paramRoute instanceof FlattenEntityRoute) {

@@ -27,26 +27,28 @@ class BlockExtension extends Twig_Extension {
 		$options = array('pre_escape' => 'html', 'is_safe' => array('html'));
 
 		return array(
-			'render_block' => new Twig_Function_Method($this, 'blockFunction', $options),
-			'render_blockManager' => new Twig_Function_Method($this, 'blockManagerFunction', $options),
+			'has_block' => new Twig_Function_Method($this, 'hasBlockFunction'),
+			'render_block' => new Twig_Function_Method($this, 'renderBlockFunction', $options),
+			'render_blockManager' => new Twig_Function_Method($this, 'renderBlockManagerFunction', $options),
 			'externalAssets' => new Twig_Function_Method($this, 'externalAssetsFunction', $options),
 			'scriptAssets' => new Twig_Function_Method($this, 'scriptAssetsFunction', $options)
 		);
 	}
 
+	public function hasBlockFunction($block, $group = null) {
+		$block = $this->blockManager->hasBlock($block, $group);
+	}
 
-	public function blockFunction($block, $group = null) {
+	public function renderBlockFunction($block, $group = null, $parameters = array()) {
 		if (is_string($block)) {
 			$block = $this->blockManager->getBlock($block, $group);
 		}
 
-		if ($block instanceof BlockInterface) {
+		if ($block && $block instanceof BlockInterface) {
 
 			$block->preRender();
-			return $this->environment->render($block->getTemplate(), array('item' => $block));
-
-		} else {
-			return '#ERROR : block not found';
+			$parameters = array_merge($parameters, array('item' => $block));
+			return $this->environment->render($block->getTemplate(), $parameters);
 		}
 
 	}
@@ -81,12 +83,12 @@ class BlockExtension extends Twig_Extension {
 		return $string;
 	}
 
-	public function blockManagerFunction($group, $separator = "") {
+	public function renderBlockManagerFunction($group, $separator = "") {
 		$htmls = array();
 		$blocks = $this->blockManager->getBlocks($group);
 		foreach ($blocks as $block) {
 
-			$htmls[] = $this->blockFunction($block);
+			$htmls[] = $this->renderBlockFunction($block);
 		}
 
 		$html = implode($separator, $htmls);

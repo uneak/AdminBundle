@@ -12,11 +12,13 @@ use ReflectionObject;
 class RoutesLoader extends FileLoader {
 
 	protected $nRouteManager;
+	protected $fRouteManager;
 	protected $flattenRouteFactory;
 
-	public function __construct(NestedRouteManager $nRouteManager, FlattenRouteFactory $flattenRouteFactory) {
+	public function __construct(NestedRouteManager $nRouteManager, FlattenRouteManager $fRouteManager, FlattenRouteFactory $flattenRouteFactory) {
 //        parent::__construct($locator);
 		$this->nRouteManager = $nRouteManager;
+		$this->fRouteManager = $fRouteManager;
 		$this->flattenRouteFactory = $flattenRouteFactory;
 	}
 
@@ -24,15 +26,20 @@ class RoutesLoader extends FileLoader {
 		$routes = new RouteCollection();
 		$nRoutes = $this->nRouteManager->getNestedRoutes();
 
-//		ld('route loader');
 		foreach ($nRoutes as $nRoute) {
 			$flattenRoutes = $this->flattenRouteFactory->getFlattenRoutes($nRoute);
-			foreach ($flattenRoutes as $key => $route) {
+
+			$this->fRouteManager->addFlattenRoute($flattenRoutes);
+
+			$registerRoutes = $this->flattenRouteFactory->getRoutes($flattenRoutes);
+
+			foreach ($registerRoutes as $key => $route) {
 				$routes->add($key, $route);
 			}
 			$reflection = new ReflectionObject($nRoute);
 			$routes->addResource(new FileResource($reflection->getFileName()));
 		}
+
 
 		return $routes;
 	}

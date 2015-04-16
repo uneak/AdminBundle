@@ -24,6 +24,7 @@ class UneakAdminExtension extends Extension {
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('block.yml');
         $loader->load('routes.yml');
+        $loader->load('helper.yml');
     }
 
 }

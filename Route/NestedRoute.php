@@ -9,9 +9,6 @@ class NestedRoute extends AbstractRoute {
     protected $parentPath = null;
     protected $controller = null;
     protected $action = null;
-//    protected $label = '';
-//    protected $description = '';
-//    protected $icon = null;
     protected $metaDatas = array();
 
     public function __construct($id) {
@@ -96,33 +93,6 @@ class NestedRoute extends AbstractRoute {
     public function getChildren() {
         return $this->children;
     }
-//
-//    function getLabel() {
-//        return $this->label;
-//    }
-//
-//    function getDescription() {
-//        return $this->description;
-//    }
-//
-//    function setLabel($label) {
-//        $this->label = $label;
-//        return $this;
-//    }
-//
-//    function setDescription($description) {
-//        $this->description = $description;
-//        return $this;
-//    }
-//
-//    function getIcon() {
-//        return $this->icon;
-//    }
-//
-//    function setIcon($icon) {
-//        $this->icon = $icon;
-//        return $this;
-//    }
 
     function getMetaDatas() {
         return $this->metaDatas;

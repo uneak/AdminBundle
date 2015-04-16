@@ -22,7 +22,6 @@
 		}
 
 		public function getScripts($group = null) {
-
 			$array = array();
 			foreach ($this->blocks as $block) {
 				$array = array_merge($array, $block->getScripts($group));
@@ -60,6 +59,14 @@
 			}
 
 			return $this->blocks[$group]->getBlock($id);
+		}
+
+		public function hasBlock($id, $group = null) {
+			if (!$group) {
+				$group = "__undefined";
+			}
+
+			return $this->blocks[$group]->hasBlock($id);
 		}
 
 		public function removeBlock($id, $group = null) {

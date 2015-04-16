@@ -58,6 +58,11 @@
 			return $this->parameters[$id];
 		}
 
+		function setParameter($id, FlattenRoute $flattenRoute) {
+			$this->parameters[$id] = $flattenRoute;
+			return $this;
+		}
+
 		function getChildren() {
 			return $this->children;
 		}
@@ -96,6 +101,11 @@
 
 		public function getCRUD() {
 			return $this->crud;
+		}
+
+		public function setCRUD($flattenRoute) {
+			$this->crud = $flattenRoute;
+			return $this;
 		}
 
 		public function getArray() {

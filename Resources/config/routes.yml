@@ -6,13 +6,19 @@ parameters:
     uneak.admin.route.flatten.pool.class: Uneak\AdminBundle\Route\FlattenRoutePool
     uneak.admin.route.nested.config.class: Uneak\AdminBundle\Route\NestedRouteConfigurator
     uneak.admin.route.nested.manager.class: Uneak\AdminBundle\Route\NestedRouteManager
+    uneak.admin.route.flatten.manager.class: Uneak\AdminBundle\Route\FlattenRouteManager
     uneak.admin.route.flatten.controller.listener.class: Uneak\AdminBundle\EventListener\FlattenRouteControllerListener
     
 services:
 
     uneak.admin.route.nested.manager:
         class: %uneak.admin.route.nested.manager.class%
-        
+
+    uneak.admin.route.flatten.manager:
+        class: %uneak.admin.route.flatten.manager.class%
+        arguments:
+            - @doctrine.orm.entity_manager
+
     uneak.admin.route.nested.config:
         class: %uneak.admin.route.nested.config.class%
         arguments: [ @uneak.admin.route.nested.manager ]
@@ -23,6 +29,7 @@ services:
     uneak.admin.route.flatten.pool:
         class: %uneak.admin.route.flatten.pool.class%
         arguments:
+            - @uneak.admin.route.flatten.manager
             - @router
             
     uneak.admin.route.flatten.controller.listener:
@@ -55,6 +62,7 @@ services:
         class: %uneak.admin.route.loader.class%
         arguments:
             - @uneak.admin.route.nested.manager
+            - @uneak.admin.route.flatten.manager
             - @uneak.admin.route.flatten.factory
         tags:
             - { name: routing.loader }

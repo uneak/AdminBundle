@@ -35,7 +35,11 @@ class BlockChain {
 	}
 
 	public function getBlock($id) {
-		return $this->blocks[$id]['block'];
+		return (isset($this->blocks[$id])) ? $this->blocks[$id]['block'] : null;
+	}
+
+	public function hasBlock($id) {
+		return isset($this->blocks[$id]);
 	}
 
 	public function removeBlock($id) {

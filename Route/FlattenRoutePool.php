@@ -10,43 +10,58 @@ class FlattenRoutePool {
 	protected $route;
 	protected $router;
 	protected $crud;
+	protected $fRouteManager;
 	private $routeCollection;
 
-	public function __construct(UrlGeneratorInterface $router) {
+	public function __construct(FlattenRouteManager $fRouteManager, UrlGeneratorInterface $router) {
+		$this->fRouteManager = $fRouteManager;
 		$this->router = $router;
 		$this->routeCollection = $this->router->getRouteCollection();
 	}
 
 	public function setRoute(FlattenRoute $flattenRoute) {
 		$this->route = $flattenRoute;
-		$this->crud = $this->routeCollection->get($flattenRoute->getCRUD());
+		$this->crud = $flattenRoute->getCRUD();
 		return $this;
 	}
 
+	public function getRoutes() {
+		return $this->fRouteManager->getFlattenRoutes();
+	}
+
+	public function getRouteAbsolute($path = null, $parameters = array()) {
+		return $this->fRouteManager->getFlattenRoute($path, $parameters);
+	}
+
 	public function getRoute($path = null) {
-		return ($path) ? $this->routeCollection->get($this->route->getId() . '.' . $path) : $this->route;
+		return ($path) ? $this->route->getChild($path) : $this->route;
 	}
 
 	public function getCrud($path = null) {
-		return ($path) ? $this->routeCollection->get($this->crud->getId() . '.' . $path) : $this->crud;
+		return ($path) ? $this->crud->getChild($path) : $this->crud;
 	}
-
 
 	public function findRoute($path) {
 		return $this->routeCollection->get($path);
 	}
 
 	public function findRouteId(FlattenRoute $flattenRoute, $path = null) {
-		return ($path) ? $flattenRoute->getId() . '.' . $path : $flattenRoute->getId();
+		$target = ($path) ? $flattenRoute->getChild($path) : $flattenRoute;
+		return $target->getId();
 	}
 
 	public function findRoutePath(FlattenRoute $flattenRoute, $path = null, $parameters = array()) {
-		return $this->router->generate($this->findRouteId($flattenRoute, $path), $parameters);
+		$routeParameters = array();
+		foreach ($flattenRoute->getParameters() as $key => $flattenRouteParameter) {
+			$routeParameters[$key] = $flattenRouteParameter->getParameterValue();
+		}
+
+		$mergedParameters = array_merge($routeParameters, $parameters);
+		return $this->router->generate($this->findRouteId($flattenRoute, $path), $mergedParameters);
 	}
 
 	public function getRoutePath($path = null, $parameters = array()) {
-		$mergedParameters = array_merge($this->_routeParameters($this->route), $parameters);
-		return $this->findRoutePath($this->route, $path, $mergedParameters);
+		return $this->findRoutePath($this->route, $path, $parameters);
 	}
 
 
@@ -61,6 +76,10 @@ class FlattenRoutePool {
 	public function getRouteCrudPath($path = null, $parameters = array()) {
 		$mergedParameters = array_merge($this->_routeParameters($this->crud), $parameters);
 		return $this->findRoutePath($this->crud, $path, $mergedParameters);
+	}
+
+	public function getRouteAbsolutePath($path, $parameters = array()) {
+		return $this->findRoutePath($this->fRouteManager->getFlattenRoute($path), null, $parameters);
 	}
 
 	public function getRouteCrudId($path = null) {
@@ -101,13 +120,11 @@ class FlattenRoutePool {
 		return $this->parameters;
 	}
 
-
-
 	private function _routeParameters(FlattenRoute $flattenRoute) {
 		$parameters = array();
 		$params = $flattenRoute->getParameters();
 		foreach ($params as $key => $param) {
-			$parameters[$key] = $this->findRoute($param)->getParameterValue();
+			$parameters[$key] = $param->getParameterValue();
 		}
 		return $parameters;
 	}

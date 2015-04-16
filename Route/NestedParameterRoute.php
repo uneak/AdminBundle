@@ -9,6 +9,7 @@ class NestedParameterRoute extends NestedRoute {
 	protected $parameterName;
 	protected $parameterPattern;
 	protected $parameterDefault;
+	protected $subActions = array();
 
 	public function __construct($id, $parameterName = null, $parameterDefault = null, $parameterPattern = null) {
 		parent::__construct($id);
@@ -46,6 +47,21 @@ class NestedParameterRoute extends NestedRoute {
 	public function setParameterDefault($parameterDefault) {
 		$this->parameterDefault = $parameterDefault;
 		return $this;
+	}
+
+
+
+	public function addSubAction($key, $path) {
+		$this->subActions[$key] = $path;
+		return $this;
+	}
+
+	public function getSubAction($key) {
+		return $this->subActions[$key];
+	}
+
+	public function getSubActions() {
+		return $this->subActions;
 	}
 
 }

@@ -1,0 +1,9 @@
+parameters:
+    uneak.admin.grid.helper.class: Uneak\AdminBundle\Helper\GridHelper
+
+    
+services:
+    uneak.admin.grid.helper:
+        class: %uneak.admin.grid.helper.class%
+        arguments:
+            - "@doctrine.orm.default_entity_manager"

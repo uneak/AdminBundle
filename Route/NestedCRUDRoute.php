@@ -9,6 +9,7 @@ class NestedCRUDRoute extends NestedAdminRoute {
 
 	public function __construct($id) {
 		parent::__construct($id);
+		$this->setEnabled(false);
 	}
 
 	public function getNestedType() {
