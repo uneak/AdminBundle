@@ -51,16 +51,22 @@
 			$select[] = 'o.id as DT_RowId';
 
 			foreach ($params['columns'] as $columns) {
-				if ($columns['data'] && $columns['data'] != '_actions') {
+				if ($columns['data'] && substr($columns['data'], 0, 1) != '_') {
 					$select[] = 'o.' . $columns['data'] . ' as ' . $columns['data'];
 				}
 			}
 
 			$qb->select(implode(", ", $select));
 
+
+
 			foreach ($params['order'] as $order) {
-				$orderColName = 'o.' . $params['columns'][$order['column']]['data'];
-				$qb->addOrderBy($orderColName, $order['dir']);
+
+				if (substr($params['columns'][$order['column']]['data'], 0, 1) != '_') {
+					$orderColName = 'o.' . $params['columns'][$order['column']]['data'];
+					$qb->addOrderBy($orderColName, $order['dir']);
+				}
+
 			}
 
 			$qb
@@ -71,6 +77,7 @@
 		}
 
 		public function createGridQueryBuilder($entityClass, $params) {
+
 
 			$qb = $this->em->createQueryBuilder();
 			$qb
@@ -89,7 +96,7 @@
 
 			if (isset($params['columns'])) {
 				foreach ($params['columns'] as $columns) {
-					if ($columns['data'] && $columns['data'] != '_actions') {
+					if ($columns['data'] && substr($columns['data'], 0, 1) != '_') {
 						for ($index = 0; $index < count($searches); $index++) {
 							$globalSearch->add($qb->expr()->like('o.' . $columns['data'], ':main_search_' . $index));
 						}

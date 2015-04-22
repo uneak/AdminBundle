@@ -7,11 +7,9 @@
 	class FlattenRouteManager {
 
 		protected $fRoutes;
-		protected $em;
 
-		public function __construct(EntityManager $em) {
+		public function __construct() {
 			$this->fRoutes = array();
-			$this->em = $em;
 		}
 
 		public function addFlattenRoute(FlattenRoute $fRoute) {
@@ -22,34 +20,21 @@
 			return $this->fRoutes;
 		}
 
-		public function getFlattenRoute($path, $parameters = array()) {
+		public function getFlattenRoute($path, $parameters = null) {
 
-			$paths = explode(".", $path);
-			$fRoute_id = array_shift($paths);
-			if (count($paths) > 0) {
-				$path = implode(".", $paths);
-			} else {
-				$path = null;
-			}
-
-			$flattenRoute = ($path) ? $this->fRoutes[$fRoute_id]->getChild($path) : $this->fRoutes[$fRoute_id];
-
-			foreach ($flattenRoute->getParameters() as $key => $flattenParamRoute) {
-				if (isset($parameters[$key])) {
-					$flattenParamRoute->setParameterValue($parameters[$key]);
-					if ($flattenParamRoute instanceof FlattenEntityRoute) {
-						$entity = $flattenParamRoute->getNestedRoute()->findEntity($this->em, $flattenParamRoute->getEntity(), $parameters[$key]);
-						$flattenParamRoute->setParameterSubject($entity);
-					}
+			if (preg_match("/([^\\/]*)(?:\\/(.*))?$/", $path, $matches)) {
+				if (isset($matches[2])) {
+					$flattenRoute = $this->fRoutes[$matches[1]]->getChild($matches[2], $parameters);
+				} else {
+					$flattenRoute = $this->fRoutes[$matches[1]];
+					$flattenRoute->updateRouteParameters($parameters);
 				}
+			} else {
+				// TODO:exeption path not found
 			}
 
 			return $flattenRoute;
 		}
-
-
-
-
 
 
 	}

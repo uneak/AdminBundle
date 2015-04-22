@@ -2,28 +2,33 @@
 
 namespace Uneak\AdminBundle\Route;
 
+use Doctrine\ORM\EntityManager;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Uneak\AdminBundle\Route\FlattenParameterRoute;
 
 class FlattenEntityRoute extends FlattenParameterRoute {
 
     protected $entity;
     protected $parameterSubject = null;
-        
-    public function __construct($data = null) {
-        parent::__construct($data);
+	protected $em;
+
+    public function __construct(Router $router, FlattenRouteManager $flattenRouteManager, EntityManager $em, $data = null) {
+        parent::__construct($router, $flattenRouteManager, $data);
+		$this->em = $em;
     }
 
     public function getEntity() {
         return $this->entity;
     }
 
+	public function setParameterValue($parameterValue) {
+		parent::setParameterValue($parameterValue);
+		$this->parameterSubject = $this->getNestedRoute()->findEntity($this->em, $this->getEntity(), $parameterValue);
+		return $this;
+	}
+
     public function getParameterSubject() {
             return $this->parameterSubject;
-    }
-
-    public function setParameterSubject($parameterSubject) {
-            $this->parameterSubject = $parameterSubject;
-            return $this;
     }
 
     public function getArray() {

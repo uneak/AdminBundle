@@ -26,13 +26,11 @@ class RoutesLoader extends FileLoader {
 		$routes = new RouteCollection();
 		$nRoutes = $this->nRouteManager->getNestedRoutes();
 
+
 		foreach ($nRoutes as $nRoute) {
 			$flattenRoutes = $this->flattenRouteFactory->getFlattenRoutes($nRoute);
-
 			$this->fRouteManager->addFlattenRoute($flattenRoutes);
-
 			$registerRoutes = $this->flattenRouteFactory->getRoutes($flattenRoutes);
-
 			foreach ($registerRoutes as $key => $route) {
 				$routes->add($key, $route);
 			}

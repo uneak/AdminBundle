@@ -10,11 +10,13 @@ class NestedRoute extends AbstractRoute {
     protected $controller = null;
     protected $action = null;
     protected $metaDatas = array();
+    protected $grantFunction;
 
     public function __construct($id) {
         parent::__construct();
         $this->id = $id;
         $this->setPath($id);
+        $this->grantFunction = array($this, "isGranted");
     }
 
     public function initialize() {
@@ -48,17 +50,6 @@ class NestedRoute extends AbstractRoute {
         return $this;
     }
 
-//    public function setParent(NestedRoute $parent, $path = null) {
-//        if (!is_null($path)) {
-//            $parent = $parent->getChild($path);
-//        }
-//        if ($this->parent != $parent) {
-//            $this->parent = $parent;
-//            $parent->addChild($this);
-//        }
-//        return $this;
-//    }
-
     public function getParentPath() {
         return $this->parentPath;
     }
@@ -80,15 +71,24 @@ class NestedRoute extends AbstractRoute {
         }
     }
 
-    public function getChild($path) {
-        $paths = explode(".", $path);
-        $path = array_shift($paths);
-        if (count($paths) > 0) {
-            return $this->children[$path]->getChild(implode(".", $paths));
-        } else {
-            return $this->children[$path];
-        }
-    }
+	public function getChild($path = "") {
+
+		if ($path == "") return $this;
+
+		if (preg_match("/^\\.\\.\\/(.*)?$/", $path, $matches)) {
+			return $this->getParent()->getChild($matches[1]);
+		}
+
+		if (preg_match("/([^\\/]*)(?:\\/(.*))?$/", $path, $matches)) {
+			if (isset($matches[2])) {
+				return $this->children[$matches[1]]->getChild($matches[2]);
+			} else {
+				return $this->children[$matches[1]];
+			}
+		}
+
+	}
+
 
     public function getChildren() {
         return $this->children;
@@ -111,5 +111,18 @@ class NestedRoute extends AbstractRoute {
         $this->metaDatas[$key] = $value;
         return $this;
     }
+
+	function setGrantFunction($callable) {
+		$this->grantFunction = $callable;
+	}
+
+	function getGrantFunction() {
+		return $this->grantFunction;
+	}
+
+
+	public function isGranted($attribute, $flattenRoute, $user = null) {
+		return true;
+	}
 
 }

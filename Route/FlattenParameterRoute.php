@@ -2,6 +2,7 @@
 
 namespace Uneak\AdminBundle\Route;
 
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Uneak\AdminBundle\Route\FlattenRoute;
 
 class FlattenParameterRoute extends FlattenRoute {
@@ -11,8 +12,8 @@ class FlattenParameterRoute extends FlattenRoute {
 	protected $parameterDefault = null;
 	protected $parameterValue = null;
 
-	public function __construct($data = null) {
-		parent::__construct($data);
+	public function __construct(Router $router, FlattenRouteManager $flattenRouteManager, $data = null) {
+		parent::__construct($router, $flattenRouteManager, $data);
 	}
 
 	public function getParameterValue() {

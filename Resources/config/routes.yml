@@ -8,7 +8,9 @@ parameters:
     uneak.admin.route.nested.manager.class: Uneak\AdminBundle\Route\NestedRouteManager
     uneak.admin.route.flatten.manager.class: Uneak\AdminBundle\Route\FlattenRouteManager
     uneak.admin.route.flatten.controller.listener.class: Uneak\AdminBundle\EventListener\FlattenRouteControllerListener
-    
+    uneak.admin.route.voter.class: Uneak\AdminBundle\Security\Authorization\Voter\RouteVoter
+
+
 services:
 
     uneak.admin.route.nested.manager:
@@ -16,8 +18,6 @@ services:
 
     uneak.admin.route.flatten.manager:
         class: %uneak.admin.route.flatten.manager.class%
-        arguments:
-            - @doctrine.orm.entity_manager
 
     uneak.admin.route.nested.config:
         class: %uneak.admin.route.nested.config.class%
@@ -25,21 +25,23 @@ services:
 
     uneak.admin.route.flatten.factory:
         class: %uneak.admin.route.flatten.factory.class%
+        arguments:
+            - @router
+            - @doctrine.orm.entity_manager
+            - @uneak.admin.route.flatten.manager
 
     uneak.admin.route.flatten.pool:
         class: %uneak.admin.route.flatten.pool.class%
         arguments:
             - @uneak.admin.route.flatten.manager
-            - @router
             
     uneak.admin.route.flatten.controller.listener:
         class: %uneak.admin.route.flatten.controller.listener.class%
         arguments:
-            - @uneak.admin.route.flatten.pool
             - @router
             - @twig
-            - @doctrine.orm.entity_manager
             - @uneak.admin.block.manager
+            - @security.authorization_checker
         tags:
             - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
             
@@ -66,4 +68,9 @@ services:
             - @uneak.admin.route.flatten.factory
         tags:
             - { name: routing.loader }
-            
+
+    uneak.admin.route.voter:
+        class: %uneak.admin.route.voter.class%
+        public: false
+        tags:
+            - { name: security.voter }

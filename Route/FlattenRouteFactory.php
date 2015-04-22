@@ -2,6 +2,8 @@
 
 	namespace Uneak\AdminBundle\Route;
 
+	use Doctrine\ORM\EntityManager;
+	use Symfony\Component\Routing\Router;
 	use Uneak\AdminBundle\Route\NestedRoute;
 
 	class FlattenRouteFactory {
@@ -40,20 +42,20 @@
 		);
 
 
+		protected $router;
+		protected $em;
+		protected $flattenRouteManager;
 
+		public function __construct(Router $router, EntityManager $em, FlattenRouteManager $flattenRouteManager) {
+			$this->router = $router;
+			$this->em = $em;
+			$this->flattenRouteManager = $flattenRouteManager;
+		}
 
 		public function getFlattenRoutes(NestedRoute $nestedRoute, $data = array()) {
 			$structs = array();
-
 			$nodeStructId = $this->_buildRouteStruct($nestedRoute, $data, $structs);
-
-
-
-
-
-
 			$flattenRoute = $this->_linkFlattenRoute($nodeStructId, $structs);
-
 			return $flattenRoute;
 		}
 
@@ -77,7 +79,13 @@
 			}
 
 			$class = $struct["class"];
-			$flattenRoute = new $class($struct);
+
+			if ($nestedRoute->getNestedType() == 'NestedEntityRoute') {
+				$flattenRoute = new $class($this->router, $this->flattenRouteManager, $this->em, $struct);
+			} else {
+				$flattenRoute = new $class($this->router, $this->flattenRouteManager, $struct);
+			}
+
 			$struct["flatten_route"] = $flattenRoute;
 
 			$structs[$struct["id"]] = $struct;

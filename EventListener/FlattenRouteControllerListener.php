@@ -4,8 +4,11 @@ namespace Uneak\AdminBundle\EventListener;
 
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Twig_Environment;
 use Uneak\AdminBundle\Block\BlockManager;
+use Uneak\AdminBundle\Security\Authorization\Voter\RouteVoter;
 use Uneak\AdminBundle\Twig\Extension\PoolExtension;
 use Uneak\AdminBundle\Route\FlattenRoute;
 use Uneak\AdminBundle\Route\FlattenParameterRoute;
@@ -16,19 +19,16 @@ use Uneak\AdminBundle\Twig\Extension\RouteExtension;
 
 class FlattenRouteControllerListener {
 
-
-    private $flattenRoutePool;
     private $router;
     private $twig;
-    private $em;
 	private $blockManager;
+	private $authorization;
 
-    public function __construct(FlattenRoutePool $flattenRoutePool, Router $router, Twig_Environment $twig, EntityManager $em, BlockManager $blockManager) {
-        $this->flattenRoutePool = $flattenRoutePool;
+    public function __construct(Router $router, Twig_Environment $twig, BlockManager $blockManager, AuthorizationChecker $authorization) {
         $this->router = $router;
         $this->twig = $twig;
-        $this->em = $em;
 		$this->blockManager = $blockManager;
+		$this->authorization = $authorization;
     }
 
     public function onKernelController(FilterControllerEvent $event) {
@@ -38,32 +38,29 @@ class FlattenRouteControllerListener {
         $route = $routeCollection->get($request->attributes->get('_route'));
 
         if ($route instanceof FlattenRoute) {
-            $this->flattenRoutePool->setRoute($route);
+
             $routeParams = $request->attributes->get('_route_params');
 
             foreach ($route->getParameters() as $key => $paramRoute) {
-
                 $paramRoute->setParameterValue($routeParams[$key]);
-
                 if ($paramRoute instanceof FlattenEntityRoute) {
-                    $nestedRoute = $paramRoute->getNestedRoute();
-                    $entity = $nestedRoute->findEntity($this->em, $paramRoute->getEntity(), $routeParams[$key]);
-                    $request->attributes->set($key, $entity);
-                    $paramRoute->setParameterSubject($entity);
+                    $request->attributes->set($key, $paramRoute->getParameterSubject());
                 }
-                
-                $this->flattenRoutePool->setParameter($key, $paramRoute);
             }
 
 
-            $request->attributes->set('routePool', $this->flattenRoutePool);
+			if ($this->authorization->isGranted(RouteVoter::ROUTE_GRANTED, $route) === false) {
+				throw new AccessDeniedException('Unauthorised access!');
+			}
+
+            $request->attributes->set('route', $route);
 			$request->attributes->set('blockManager', $this->blockManager);
 
 //			$poolParameters = new PoolExtension('flatten_route');
 //			$poolParameters->addParameter('flattenRoutePool', $this->flattenRoutePool);
 //			$this->twig->addExtension($poolParameters);
 
-            $this->twig->addExtension(new RouteExtension($this->flattenRoutePool));
+            $this->twig->addExtension(new RouteExtension($route));
 
         }
     }

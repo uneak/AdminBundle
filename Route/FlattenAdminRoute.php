@@ -2,6 +2,7 @@
 
 namespace Uneak\AdminBundle\Route;
 
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Uneak\AdminBundle\Route\FlattenRoute;
 
 class FlattenAdminRoute extends FlattenRoute {
@@ -9,8 +10,8 @@ class FlattenAdminRoute extends FlattenRoute {
     protected $admin;
     protected $entity;
 
-    public function __construct($data = null) {
-        parent::__construct($data);
+    public function __construct(Router $router, FlattenRouteManager $flattenRouteManager, $data = null) {
+        parent::__construct($router, $flattenRouteManager, $data);
     }
 
 
