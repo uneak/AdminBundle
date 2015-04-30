@@ -14,18 +14,19 @@ class RoutesLoader extends FileLoader {
 	protected $nRouteManager;
 	protected $fRouteManager;
 	protected $flattenRouteFactory;
+	protected $rootPath;
 
-	public function __construct(NestedRouteManager $nRouteManager, FlattenRouteManager $fRouteManager, FlattenRouteFactory $flattenRouteFactory) {
+	public function __construct(NestedRouteManager $nRouteManager, FlattenRouteManager $fRouteManager, FlattenRouteFactory $flattenRouteFactory, $rootPath) {
 //        parent::__construct($locator);
 		$this->nRouteManager = $nRouteManager;
 		$this->fRouteManager = $fRouteManager;
 		$this->flattenRouteFactory = $flattenRouteFactory;
+		$this->rootPath = $rootPath;
 	}
 
 	public function load($resource, $type = null) {
 		$routes = new RouteCollection();
 		$nRoutes = $this->nRouteManager->getNestedRoutes();
-
 
 		foreach ($nRoutes as $nRoute) {
 			$flattenRoutes = $this->flattenRouteFactory->getFlattenRoutes($nRoute);
@@ -37,7 +38,7 @@ class RoutesLoader extends FileLoader {
 			$reflection = new ReflectionObject($nRoute);
 			$routes->addResource(new FileResource($reflection->getFileName()));
 		}
-
+		$routes->addPrefix($this->rootPath);
 
 		return $routes;
 	}

@@ -23,30 +23,39 @@
 		}
 
 		public function createItem(FlattenRoute $flattenRoute) {
-			$label = $flattenRoute->getMetaData("_label");
-			$icon = $flattenRoute->getMetaData("_icon");
-			$badge = $flattenRoute->getMetaData("_badge");
 
-			$menu = array();
-			if ($label) {
-				$menu['label'] = $label;
-			}
-			if ($icon) {
-				$menu['icon'] = $icon;
-			}
-			if ($badge) {
-				$menu['badge'] = $badge;
-			}
-			$menu['uri'] = $flattenRoute->getRoutePath();
+			if ($this->authorization->isGranted(RouteVoter::ROUTE_GRANTED, $flattenRoute) === true) {
 
-			return $this->factory->createItem($flattenRoute->getId(), $menu);
+				$label = $flattenRoute->getMetaData("_label");
+				$icon = $flattenRoute->getMetaData("_icon");
+				$badge = $flattenRoute->getMetaData("_badge");
+
+				$menu = array();
+				if ($label) {
+					$menu['label'] = $label;
+				}
+				if ($icon) {
+					$menu['icon'] = $icon;
+				}
+				if ($badge) {
+					$menu['badge'] = $badge;
+				}
+				$menu['uri'] = $flattenRoute->getRoutePath();
+
+				return $this->factory->createItem($flattenRoute->getId(), $menu);
+			}
+
+			return null;
+
 		}
 
-		public function createMenu($root, $actions, FlattenRoute $flattenRoute, $parameters = null) {
+		public function createMenu($actions, FlattenRoute $flattenRoute, $parameters = null) {
+			$root = $this->factory->createItem('root');
 			foreach ($actions as $action) {
 				$route = $flattenRoute->getChild($action, $parameters);
-				if ($this->authorization->isGranted(RouteVoter::ROUTE_GRANTED, $route) === true) {
-					$root->addChild($this->createItem($route));
+				$menuItem = $this->createItem($route);
+				if ($menuItem) {
+					$root->addChild($menuItem);
 				}
 			}
 			return $root;

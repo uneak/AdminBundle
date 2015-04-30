@@ -2,6 +2,7 @@
 
 namespace Uneak\AdminBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
@@ -18,8 +19,12 @@ class UneakAdminExtension extends Extension {
      * {@inheritdoc}
      */
     public function load(array $configs, ContainerBuilder $container) {
+
+		$processor = new Processor();
         $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+
+		$config = $processor->processConfiguration($configuration, $configs);
+		$container->setParameter('uneak.admin.root_path', $config['root_path']);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('block.yml');

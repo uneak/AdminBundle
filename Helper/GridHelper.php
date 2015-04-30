@@ -27,7 +27,6 @@
 		}
 
 
-
 		public function gridFieldsTotalCount($entityClass) {
 
 			$qb = $this->em->createQueryBuilder();
@@ -77,7 +76,6 @@
 		}
 
 		public function createGridQueryBuilder($entityClass, $params) {
-
 
 			$qb = $this->em->createQueryBuilder();
 			$qb

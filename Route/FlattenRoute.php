@@ -88,6 +88,7 @@
 
 		public function getChild($path = "", $parameters = null) {
 
+
 			if ($parameters && count($parameters)) {
 				$parameters = $this->updateRouteParameters($parameters);
 			}

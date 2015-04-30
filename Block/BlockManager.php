@@ -50,7 +50,7 @@
 		}
 
 		public function getBlocks($group) {
-			return $this->blocks[$group]->getBlocks();
+			return (isset($this->blocks[$group])) ? $this->blocks[$group]->getBlocks() : null;
 		}
 
 		public function getBlock($id, $group = null) {
@@ -58,7 +58,7 @@
 				$group = "__undefined";
 			}
 
-			return $this->blocks[$group]->getBlock($id);
+			return (isset($this->blocks[$group])) ? $this->blocks[$group]->getBlock($id) : null;
 		}
 
 		public function hasBlock($id, $group = null) {
@@ -66,7 +66,7 @@
 				$group = "__undefined";
 			}
 
-			return $this->blocks[$group]->hasBlock($id);
+			return (isset($this->blocks[$group])) ? $this->blocks[$group]->hasBlock($id) : null;
 		}
 
 		public function removeBlock($id, $group = null) {
@@ -74,11 +74,13 @@
 				$group = "__undefined";
 			}
 
-			return $this->blocks[$group]->removeBlock($id);
+			return (isset($this->blocks[$group])) ? $this->blocks[$group]->removeBlock($id) : null;
 		}
 
 		public function clearBlocks($group) {
-			$this->blocks[$group]->clearBlocks();
+			if (isset($this->blocks[$group])) {
+				$this->blocks[$group]->clearBlocks();
+			}
 
 			return $this;
 		}

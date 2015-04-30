@@ -26,7 +26,6 @@ class RouteVoter extends AbstractVoter {
 		return array('Uneak\AdminBundle\Route\FlattenRoute');
 	}
 
-
 	protected function isGranted($attribute, $flattenRoute, $user = null) {
 
 		if (!$user instanceof UserInterface) {

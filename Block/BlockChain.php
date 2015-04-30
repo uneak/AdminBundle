@@ -12,7 +12,6 @@ class BlockChain {
 		$this->blocks = array();
 	}
 
-
 	public function getExternalFiles($group = null) {
 		$array = array();
 		foreach ($this->blocks as $block) {

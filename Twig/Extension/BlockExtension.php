@@ -86,9 +86,10 @@ class BlockExtension extends Twig_Extension {
 	public function renderBlockManagerFunction($group, $separator = "") {
 		$htmls = array();
 		$blocks = $this->blockManager->getBlocks($group);
-		foreach ($blocks as $block) {
-
-			$htmls[] = $this->renderBlockFunction($block);
+		if ($blocks) {
+			foreach ($blocks as $block) {
+				$htmls[] = $this->renderBlockFunction($block);
+			}
 		}
 
 		$html = implode($separator, $htmls);

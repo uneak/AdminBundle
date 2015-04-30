@@ -3,7 +3,6 @@ parameters:
     uneak.admin.route.cache.warmup.class: Uneak\AdminBundle\Route\RoutesCacheWarmUp
     uneak.admin.route.loader.class: Uneak\AdminBundle\Route\RoutesLoader
     uneak.admin.route.flatten.factory.class: Uneak\AdminBundle\Route\FlattenRouteFactory
-    uneak.admin.route.flatten.pool.class: Uneak\AdminBundle\Route\FlattenRoutePool
     uneak.admin.route.nested.config.class: Uneak\AdminBundle\Route\NestedRouteConfigurator
     uneak.admin.route.nested.manager.class: Uneak\AdminBundle\Route\NestedRouteManager
     uneak.admin.route.flatten.manager.class: Uneak\AdminBundle\Route\FlattenRouteManager
@@ -30,11 +29,6 @@ services:
             - @doctrine.orm.entity_manager
             - @uneak.admin.route.flatten.manager
 
-    uneak.admin.route.flatten.pool:
-        class: %uneak.admin.route.flatten.pool.class%
-        arguments:
-            - @uneak.admin.route.flatten.manager
-            
     uneak.admin.route.flatten.controller.listener:
         class: %uneak.admin.route.flatten.controller.listener.class%
         arguments:
@@ -66,6 +60,7 @@ services:
             - @uneak.admin.route.nested.manager
             - @uneak.admin.route.flatten.manager
             - @uneak.admin.route.flatten.factory
+            - %uneak.admin.root_path%
         tags:
             - { name: routing.loader }
 

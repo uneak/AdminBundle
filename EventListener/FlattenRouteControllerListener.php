@@ -56,10 +56,6 @@ class FlattenRouteControllerListener {
             $request->attributes->set('route', $route);
 			$request->attributes->set('blockManager', $this->blockManager);
 
-//			$poolParameters = new PoolExtension('flatten_route');
-//			$poolParameters->addParameter('flattenRoutePool', $this->flattenRoutePool);
-//			$this->twig->addExtension($poolParameters);
-
             $this->twig->addExtension(new RouteExtension($route));
 
         }
