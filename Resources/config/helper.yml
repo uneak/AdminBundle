@@ -1,0 +1,16 @@
+parameters:
+    uneak.admin.grid.helper.class: Uneak\AdminBundle\Helper\GridHelper
+    uneak.admin.menu.helper.class: Uneak\AdminBundle\Helper\MenuHelper
+
+    
+services:
+    uneak.admin.grid.helper:
+        class: %uneak.admin.grid.helper.class%
+        arguments:
+            - @doctrine.orm.default_entity_manager
+
+    uneak.admin.menu.helper:
+        class: %uneak.admin.menu.helper.class%
+        arguments:
+            - @knp_menu.factory
+            - @security.authorization_checker

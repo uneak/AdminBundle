@@ -1,0 +1,71 @@
+parameters:
+    uneak.admin.route.cache.class: Uneak\AdminBundle\Route\RoutesCache
+    uneak.admin.route.cache.warmup.class: Uneak\AdminBundle\Route\RoutesCacheWarmUp
+    uneak.admin.route.loader.class: Uneak\AdminBundle\Route\RoutesLoader
+    uneak.admin.route.flatten.factory.class: Uneak\AdminBundle\Route\FlattenRouteFactory
+    uneak.admin.route.nested.config.class: Uneak\AdminBundle\Route\NestedRouteConfigurator
+    uneak.admin.route.nested.manager.class: Uneak\AdminBundle\Route\NestedRouteManager
+    uneak.admin.route.flatten.manager.class: Uneak\AdminBundle\Route\FlattenRouteManager
+    uneak.admin.route.flatten.controller.listener.class: Uneak\AdminBundle\EventListener\FlattenRouteControllerListener
+    uneak.admin.route.voter.class: Uneak\AdminBundle\Security\Authorization\Voter\RouteVoter
+
+
+services:
+
+    uneak.admin.route.nested.manager:
+        class: %uneak.admin.route.nested.manager.class%
+
+    uneak.admin.route.flatten.manager:
+        class: %uneak.admin.route.flatten.manager.class%
+
+    uneak.admin.route.nested.config:
+        class: %uneak.admin.route.nested.config.class%
+        arguments: [ @uneak.admin.route.nested.manager ]
+
+    uneak.admin.route.flatten.factory:
+        class: %uneak.admin.route.flatten.factory.class%
+        arguments:
+            - @router
+            - @doctrine.orm.entity_manager
+            - @uneak.admin.route.flatten.manager
+
+    uneak.admin.route.flatten.controller.listener:
+        class: %uneak.admin.route.flatten.controller.listener.class%
+        arguments:
+            - @router
+            - @twig
+            - @uneak.admin.block.manager
+            - @security.authorization_checker
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+            
+    uneak.admin.route.cache:
+        class: %uneak.admin.route.cache.class%
+        arguments:
+            - %kernel.cache_dir%/uneak/admin
+            - %kernel.debug%
+            - @uneak.admin.route.flatten.factory
+            
+    uneak.admin.route.cache.warmup:
+        class: %uneak.admin.route.cache.warmup.class%
+        arguments:
+            - @uneak.admin.route.cache
+            - @uneak.admin.route.nested.manager
+        tags:
+            - { name: kernel.cache_warmer, priority: 30 }
+
+    uneak.admin.route.loader:
+        class: %uneak.admin.route.loader.class%
+        arguments:
+            - @uneak.admin.route.nested.manager
+            - @uneak.admin.route.flatten.manager
+            - @uneak.admin.route.flatten.factory
+            - %uneak.admin.root_path%
+        tags:
+            - { name: routing.loader }
+
+    uneak.admin.route.voter:
+        class: %uneak.admin.route.voter.class%
+        public: false
+        tags:
+            - { name: security.voter }
