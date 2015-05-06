@@ -14,3 +14,4 @@ services:
         arguments:
             - @knp_menu.factory
             - @security.authorization_checker
+            - @request_stack
