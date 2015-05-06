@@ -4,18 +4,22 @@
 
 	use Doctrine\ORM\Query\Expr;
 	use Knp\Menu\FactoryInterface;
+	use Symfony\Component\HttpFoundation\Request;
+	use Symfony\Component\HttpFoundation\RequestStack;
 	use Symfony\Component\Security\Core\Authorization\AuthorizationChecker;
 	use Uneak\AdminBundle\Route\FlattenRoute;
 	use Uneak\AdminBundle\Security\Authorization\Voter\RouteVoter;
 
 	class MenuHelper {
 
-		protected $factory;
+		private $factory;
 		private $authorization;
+		private $requestStack;
 
-		public function __construct(FactoryInterface $factory, AuthorizationChecker $authorization) {
+		public function __construct(FactoryInterface $factory, AuthorizationChecker $authorization, RequestStack $requestStack) {
 			$this->factory = $factory;
 			$this->authorization = $authorization;
+			$this->requestStack = $requestStack;
 		}
 
 		public function getFactory() {
@@ -29,6 +33,8 @@
 				$label = $flattenRoute->getMetaData("_label");
 				$icon = $flattenRoute->getMetaData("_icon");
 				$badge = $flattenRoute->getMetaData("_badge");
+				$requestUri = $this->requestStack->getCurrentRequest()->getRequestUri();
+				$uri = $flattenRoute->getRoutePath();
 
 				$menu = array();
 				if ($label) {
@@ -40,7 +46,11 @@
 				if ($badge) {
 					$menu['badge'] = $badge;
 				}
-				$menu['uri'] = $flattenRoute->getRoutePath();
+				if ($uri == $requestUri) {
+					$menu['attributes'] = array("class" => "active");
+				}
+
+				$menu['uri'] = $uri;
 
 				return $this->factory->createItem($flattenRoute->getId(), $menu);
 			}
@@ -60,9 +70,6 @@
 			}
 			return $root;
 		}
-
-
-
 
 
 
