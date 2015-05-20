@@ -18,7 +18,7 @@ class BlockCompilerPass implements CompilerPassInterface {
         foreach ($taggedServices as $id => $tagAttributes) {
             foreach ($tagAttributes as $attributes) {
                 $definition->addMethodCall(
-                        'addBlock', array($attributes['id'], new Reference($id), $attributes['priority'], $attributes['group'])
+                        'addBlock', array(new Reference($id), $attributes['id'], $attributes['priority'], $attributes['group'])
                 );
             }
         }

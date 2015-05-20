@@ -26,7 +26,7 @@
 			return $this->factory;
 		}
 
-		public function createItem(FlattenRoute $flattenRoute) {
+		public function createItem(FlattenRoute $flattenRoute, $parameters = array()) {
 
 			if ($this->authorization->isGranted(RouteVoter::ROUTE_GRANTED, $flattenRoute) === true) {
 
@@ -52,6 +52,8 @@
 
 				$menu['uri'] = $uri;
 
+				$menu = array_merge_recursive($parameters, $menu);
+
 				return $this->factory->createItem($flattenRoute->getId(), $menu);
 			}
 
@@ -59,14 +61,23 @@
 
 		}
 
-		public function createMenu($actions, FlattenRoute $flattenRoute, $parameters = null) {
-			$root = $this->factory->createItem('root');
+		public function getItemList($actions, FlattenRoute $flattenRoute, $parameters = null) {
+			$itemList = array();
 			foreach ($actions as $action) {
-				$route = $flattenRoute->getChild($action, $parameters);
-				$menuItem = $this->createItem($route);
+				$menuItem = $this->createItem($flattenRoute->getChild($action, $parameters));
 				if ($menuItem) {
-					$root->addChild($menuItem);
+					array_push($itemList, $menuItem);
 				}
+			}
+			return $itemList;
+		}
+
+
+		public function createMenu($actions, FlattenRoute $flattenRoute, $parameters = null) {
+			$itemList = $this->getItemList($actions, $flattenRoute, $parameters);
+			$root = $this->factory->createItem('root');
+			foreach ($itemList as $item) {
+				$root->addChild($item);
 			}
 			return $root;
 		}

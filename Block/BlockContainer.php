@@ -10,7 +10,6 @@
 			parent::__construct();
 		}
 
-
 		public function getExternalFiles($group = null) {
 			$array = parent::getExternalFiles($group);
 			foreach ($this->blocks as $block) {
@@ -27,27 +26,53 @@
 			return $array;
 		}
 
-		public function addBlock(BlockInterface $block) {
-			array_push($this->blocks, $block);
 
+		public function addBlock(BlockInterface $block, $id = null, $priority = 0, $group = null) {
+			if (!$group) {
+				$group = "__undefined";
+			}
+			if (!isset($this->blocks[$group])) {
+				$this->blocks[$group] = new BlockChain();
+			}
+			$this->blocks[$group]->addBlock($block, $id, $priority);
 			return $this;
 		}
 
-		public function removeBlock(BlockInterface $block) {
-			$key = array_search($block, $this->blocks);
-			if ($key !== false) {
-				array_splice($this->blocks, $key, 1);
+		public function getBlocks($group = null) {
+			if (!$group) {
+				$group = "__undefined";
+			}
+			return (isset($this->blocks[$group])) ? $this->blocks[$group]->getBlocks($group) : null;
+		}
+
+		public function getBlock($id, $group = null) {
+			if (!$group) {
+				$group = "__undefined";
 			}
 
-			return $this;
+			return (isset($this->blocks[$group])) ? $this->blocks[$group]->getBlock($id) : null;
 		}
 
-		public function getBlocks() {
-			return $this->blocks;
+		public function hasBlock($id, $group = null) {
+			if (!$group) {
+				$group = "__undefined";
+			}
+
+			return (isset($this->blocks[$group])) ? $this->blocks[$group]->hasBlock($id) : null;
 		}
 
-		public function setBlocks($blocks) {
-			$this->blocks = $blocks;
+		public function removeBlock($id, $group = null) {
+			if (!$group) {
+				$group = "__undefined";
+			}
+
+			return (isset($this->blocks[$group])) ? $this->blocks[$group]->removeBlock($id) : null;
+		}
+
+		public function clearBlocks($group) {
+			if (isset($this->blocks[$group])) {
+				$this->blocks[$group]->clearBlocks();
+			}
 
 			return $this;
 		}

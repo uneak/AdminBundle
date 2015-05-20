@@ -8,12 +8,9 @@
 		protected $template;
 		protected $metas;
 		protected $externalFiles = array();
-//		protected $scripts = array();
 
 		public function __construct() {
 			$this->metas = new Meta($this);
-//			$this->_registerExternalFile();
-//			$this->_registerScript();
 		}
 
 		public function preRender() {
@@ -26,21 +23,6 @@
 		public function _registerScript() {
 			return array();
 		}
-
-//		public function addExternalFile(ExternalFile $externalFile) {
-//			array_push($this->externalFiles, $externalFile);
-//
-//			return $this;
-//		}
-//
-//		public function removeExternalFile(ExternalFile $externalFile) {
-//			$key = array_search($externalFile, $this->externalFiles);
-//			if ($key !== false) {
-//				array_splice($this->externalFiles, $key, 1);
-//			}
-//
-//			return $this;
-//		}
 
 		public function getExternalFiles($group = null) {
 
@@ -59,26 +41,6 @@
 			return $array;
 		}
 
-//		public function setExternalFiles($externalFiles) {
-//			$this->externalFiles = $externalFiles;
-//
-//			return $this;
-//		}
-
-//		public function addScript(Script $scripts) {
-//			array_push($this->scripts, $scripts);
-//
-//			return $this;
-//		}
-//
-//		public function removeScript(Script $scripts) {
-//			$key = array_search($scripts, $this->scripts);
-//			if ($key !== false) {
-//				array_splice($this->scripts, $key, 1);
-//			}
-//
-//			return $this;
-//		}
 
 		public function getScripts($group = null) {
 
@@ -98,11 +60,6 @@
 			return $array;
 		}
 
-//		public function setScripts($scripts) {
-//			$this->scripts = $scripts;
-//
-//			return $this;
-//		}
 
 		public function getMetas() {
 			return $this->metas;
@@ -114,6 +71,7 @@
 
 		public function setMeta($key, $value) {
 			$this->metas->__set($key, $value);
+
 			return $this;
 		}
 

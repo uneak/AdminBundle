@@ -28,8 +28,12 @@ class BlockChain {
 		return $array;
 	}
 
-	public function addBlock($id, BlockInterface $block, $priority) {
-		$this->blocks[$id] = array('block' => $block, 'priority' => $priority);
+	public function addBlock(BlockInterface $block, $id, $priority) {
+		if ($id) {
+			$this->blocks[$id] = array('block' => $block, 'priority' => $priority);
+		} else {
+			$this->blocks[] = array('block' => $block, 'priority' => $priority);
+		}
 		uasort($this->blocks, array($this, "_cmp"));
 	}
 
