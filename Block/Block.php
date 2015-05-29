@@ -2,12 +2,13 @@
 
 	namespace Uneak\AdminBundle\Block;
 
+	use Uneak\AdminBundle\Assets\AssetsDependencyInterface;
+
 	abstract class Block implements BlockInterface, AssetsDependencyInterface {
 
 		protected $title;
 		protected $template;
 		protected $metas;
-		protected $externalFiles = array();
 
 		public function __construct() {
 			$this->metas = new Meta($this);
@@ -28,13 +29,13 @@
 
 			$externalFiles = $this->_registerExternalFile();
 			$array = array();
-			foreach ($externalFiles as $externalFile) {
+			foreach ($externalFiles as $key => $externalFile) {
 				if ($group) {
 					if ($externalFile->getGroup() == $group) {
-						$array[$externalFile->getSrc()] = $externalFile;
+						$array[$key] = $externalFile;
 					}
 				} else {
-					$array[$externalFile->getSrc()] = $externalFile;
+					$array[$key] = $externalFile;
 				}
 			}
 
@@ -43,19 +44,17 @@
 
 
 		public function getScripts($group = null) {
-
 			$scripts = $this->_registerScript();
 			$array = array();
-			foreach ($scripts as $script) {
+			foreach ($scripts as $key => $script) {
 				if ($group) {
 					if ($script->getGroup() == $group) {
-						array_push($array, $script);
+						$array[$key] = $script;
 					}
 				} else {
-					array_push($array, $script);
+					$array[$key] = $script;
 				}
 			}
-
 
 			return $array;
 		}

@@ -6,14 +6,14 @@
 	 * Time: 16:13
 	 */
 
-	namespace Uneak\AdminBundle\Block;
+	namespace Uneak\AdminBundle\Assets;
 
 	class ExternalJs extends ExternalFile {
 
 		protected $src;
 
-		public function __construct($src, $class = "", $type = "text/javascript", $tag = "script", $priority = 0, $group = "ExternalJs") {
-			$this->priority = $priority;
+		public function __construct($src, $dependencies = null, $class = "", $type = "text/javascript", $tag = "script", $group = "ExternalJs") {
+			$this->dependencies = $dependencies;
 			$this->group = $group;
 			$this->tag = $tag;
 			$this->type = $type;

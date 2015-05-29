@@ -9,7 +9,6 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Twig_Environment;
 use Uneak\AdminBundle\Block\BlockManager;
 use Uneak\AdminBundle\Security\Authorization\Voter\RouteVoter;
-use Uneak\AdminBundle\Twig\Extension\PoolExtension;
 use Uneak\AdminBundle\Route\FlattenRoute;
 use Uneak\AdminBundle\Route\FlattenParameterRoute;
 use Uneak\AdminBundle\Route\FlattenEntityRoute;

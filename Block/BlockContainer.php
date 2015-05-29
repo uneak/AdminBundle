@@ -13,7 +13,16 @@
 		public function getExternalFiles($group = null) {
 			$array = parent::getExternalFiles($group);
 			foreach ($this->blocks as $block) {
-				$array = array_merge($array, $block->getExternalFiles($group));
+				$scripts = $block->getExternalFiles($group);
+				foreach ($scripts as $key => $asset) {
+					if (!isset($array[$key])) {
+						$array[$key] = $asset;
+					} elseif (is_array($array[$key])){
+						array_push($array[$key], $asset);
+					} else {
+						$array[$key] = array($array[$key], $asset);
+					}
+				}
 			}
 			return $array;
 		}
@@ -21,7 +30,19 @@
 		public function getScripts($group = null) {
 			$array = parent::getScripts($group);
 			foreach ($this->blocks as $block) {
-				$array = array_merge($array, $block->getScripts($group));
+
+				$scripts = $block->getScripts($group);
+				foreach ($scripts as $key => $asset) {
+					if (!isset($array[$key])) {
+						$array[$key] = $asset;
+					} elseif (is_array($array[$key])){
+						array_push($array[$key], $asset);
+					} else {
+						$array[$key] = array($array[$key], $asset);
+					}
+				}
+
+
 			}
 			return $array;
 		}

@@ -1,0 +1,21 @@
+parameters:
+    uneak.admin.assets.manager.class: Uneak\AdminBundle\Assets\AssetsManager
+    uneak.admin.assets.twig.extension.class: Uneak\AdminBundle\Twig\Extension\AssetExtension
+
+services:
+
+    uneak.admin.assets.manager:
+        class: %uneak.admin.assets.manager.class%
+
+    uneak.admin.assets.twig.extension:
+        class: %uneak.admin.assets.twig.extension.class%
+        arguments:
+            - @uneak.admin.assets.manager
+            - @twig
+        tags:
+            - { name: twig.extension }
+
+    twig.stringloader:
+        class: Twig_Loader_String
+        tags:
+            - { name: twig.loader }

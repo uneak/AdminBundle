@@ -1,6 +1,6 @@
 <?php
 
-	namespace Uneak\AdminBundle\Block;
+	namespace Uneak\AdminBundle\Assets;
 
 
 	abstract class ExternalFile extends Assets {
