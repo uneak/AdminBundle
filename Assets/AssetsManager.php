@@ -26,12 +26,28 @@
 			foreach ($this->assetsDependencies as $assetsDependency) {
 				$externalFiles = $assetsDependency->getExternalFiles($group);
 				foreach ($externalFiles as $key => $asset) {
-					if (!isset($array[$key])) {
-						$array[$key] = $asset;
-					} elseif (is_array($array[$key])){
-						array_push($array[$key], $asset);
+					if (is_array($asset)) {
+						foreach ($asset as $assetItem) {
+							if (!isset($array[$key])) {
+								$array[$key] = $assetItem;
+							} elseif (is_array($array[$key])) {
+								array_push($array[$key], $assetItem);
+							} else {
+								$prevAsset = $array[$key];
+								unset($array[$key]);
+								$array[$key] = array($prevAsset, $assetItem);
+							}
+						}
 					} else {
-						$array[$key] = array($array[$key], $asset);
+						if (!isset($array[$key])) {
+							$array[$key] = $asset;
+						} elseif (is_array($array[$key])) {
+							array_push($array[$key], $asset);
+						} else {
+							$prevAsset = $array[$key];
+							unset($array[$key]);
+							$array[$key] = array($prevAsset, $asset);
+						}
 					}
 				}
 			}
@@ -51,12 +67,28 @@
 				$scripts = $assetsDependency->getScripts($group);
 
 				foreach ($scripts as $key => $asset) {
-					if (!isset($array[$key])) {
-						$array[$key] = $asset;
-					} elseif (is_array($array[$key])){
-						array_push($array[$key], $asset);
+					if (is_array($asset)) {
+						foreach ($asset as $assetItem) {
+							if (!isset($array[$key])) {
+								$array[$key] = $assetItem;
+							} elseif (is_array($array[$key])) {
+								array_push($array[$key], $assetItem);
+							} else {
+								$prevAsset = $array[$key];
+								unset($array[$key]);
+								$array[$key] = array($prevAsset, $assetItem);
+							}
+						}
 					} else {
-						$array[$key] = array($array[$key], $asset);
+						if (!isset($array[$key])) {
+							$array[$key] = $asset;
+						} elseif (is_array($array[$key])) {
+							array_push($array[$key], $asset);
+						} else {
+							$prevAsset = $array[$key];
+							unset($array[$key]);
+							$array[$key] = array($prevAsset, $asset);
+						}
 					}
 				}
 			}
