@@ -14,11 +14,11 @@
 		public function __construct(){
 		}
 
-		public function _registerExternalFile() {
+		protected function _registerExternalFile(FormView $formView) {
 			return array();
 		}
 
-		public function _registerScript(FormView $formView) {
+		protected function _registerScript(FormView $formView) {
 			return array();
 		}
 
@@ -41,7 +41,7 @@
 		}
 
 		public function getExternalFiles($group = null) {
-			$externalFiles = $this->_registerExternalFile();
+			$externalFiles = $this->_registerExternalFile($this->formView);
 			$array = array();
 			foreach ($externalFiles as $key => $externalFile) {
 				if ($group) {

@@ -49,6 +49,7 @@
 			$array = array();
 			foreach ($this->assetsDependencies as $assetsDependency) {
 				$scripts = $assetsDependency->getScripts($group);
+
 				foreach ($scripts as $key => $asset) {
 					if (!isset($array[$key])) {
 						$array[$key] = $asset;
@@ -65,6 +66,7 @@
 			foreach ($array as $key => $asset) {
 				$this->_resolveDependency($key, $array, $resolved);
 			}
+
 
 			return $resolved;
 		}
@@ -89,7 +91,7 @@
 				}
 
 				if ($dependencies) {
-					foreach ($dependencies as $dependency) {
+					foreach ($dependencies as $depKey => $dependency) {
 						$this->_resolveDependency($dependency, $array, $resolved);
 					}
 				}

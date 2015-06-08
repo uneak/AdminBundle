@@ -7,7 +7,7 @@ use Twig_Function_Method;
 use Uneak\AdminBundle\Assets\AssetsManager;
 use Uneak\AdminBundle\Block\BlockInterface;
 use Uneak\AdminBundle\Block\BlockManager;
-use Uneak\AdminBundle\Block\ScriptJs;
+use Uneak\AdminBundle\Assets\ScriptJs;
 use Uneak\AdminBundle\Form\FormFactory;
 
 class AssetExtension extends Twig_Extension {
@@ -66,6 +66,7 @@ class AssetExtension extends Twig_Extension {
 	}
 
 	private function _renderScript($scriptAsset) {
+
 		if ($scriptAsset instanceof ScriptJs) {
 			$render = array();
 			array_push($render, '<' . $scriptAsset->getTag());

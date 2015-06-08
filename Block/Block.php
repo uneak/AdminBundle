@@ -17,11 +17,11 @@
 		public function preRender() {
 		}
 
-		public function _registerExternalFile() {
+		protected function _registerExternalFile() {
 			return array();
 		}
 
-		public function _registerScript() {
+		protected function _registerScript() {
 			return array();
 		}
 
