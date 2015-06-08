@@ -6,15 +6,15 @@
 	 * Time: 16:13
 	 */
 
-	namespace Uneak\AdminBundle\Block;
+	namespace Uneak\AdminBundle\Assets;
 
 	class ScriptJs extends Script {
 
 		protected $type;
 
-		public function __construct($content = "", $parameters = array(), $tag = "script", $priority = 0, $group = "ScriptJs") {
+		public function __construct($content = "", $dependencies = null, $parameters = array(), $tag = "script", $group = "ScriptJs") {
+			$this->dependencies = $dependencies;
 			$this->tag = $tag;
-			$this->priority = $priority;
 			$this->parameters = $parameters;
 			$this->group = $group;
 			$this->type = "text/javascript";

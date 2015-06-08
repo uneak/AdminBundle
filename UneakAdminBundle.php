@@ -3,6 +3,7 @@
 namespace Uneak\AdminBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Uneak\AdminBundle\DependencyInjection\Compiler\FormCompilerPass;
 use Uneak\AdminBundle\DependencyInjection\Compiler\NestedRouteCompilerPass;
 use Uneak\AdminBundle\DependencyInjection\Compiler\BlockCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;

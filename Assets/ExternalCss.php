@@ -6,15 +6,15 @@
 	 * Time: 16:13
 	 */
 
-	namespace Uneak\AdminBundle\Block;
+	namespace Uneak\AdminBundle\Assets;
 
 	class ExternalCss extends ExternalFile {
 
 		protected $rel;
 		protected $media;
 
-		public function __construct($href, $media="", $rel="", $type = "text/css", $tag = "link", $priority = 0, $group = "ExternalCss") {
-			$this->priority = $priority;
+		public function __construct($href, $dependencies = null, $media="", $rel="", $type = "text/css", $tag = "link", $group = "ExternalCss") {
+			$this->dependencies = $dependencies;
 			$this->group = $group;
 			$this->tag = $tag;
 			$this->type = $type;

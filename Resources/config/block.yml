@@ -1,5 +1,4 @@
 parameters:
-    uneak.admin.block.controller.listener.class: Uneak\AdminBundle\EventListener\BlockControllerListener
     uneak.admin.block.manager.class: Uneak\AdminBundle\Block\BlockManager
     uneak.admin.block.twig.extension.class: Uneak\AdminBundle\Twig\Extension\BlockExtension
     
@@ -7,6 +6,8 @@ services:
 
     uneak.admin.block.manager:
         class: %uneak.admin.block.manager.class%
+        arguments:
+            - @uneak.admin.assets.manager
 
     uneak.admin.block.twig.extension:
         class: %uneak.admin.block.twig.extension.class%
@@ -15,8 +16,3 @@ services:
             - @twig
         tags:
             - { name: twig.extension }
-
-    twig.stringloader:
-        class: Twig_Loader_String
-        tags:
-            - { name: twig.loader }

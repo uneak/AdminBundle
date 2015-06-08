@@ -6,18 +6,31 @@
 	 * Time: 16:13
 	 */
 
-	namespace Uneak\AdminBundle\Block;
+	namespace Uneak\AdminBundle\Assets;
 
 
 	abstract class Assets {
 
 		protected $tag;
-		protected $priority = 0;
 		protected $group;
+		protected $dependencies = array();
 
 		public function __construct() {
 		}
 
+		public function getDependencies() {
+			return $this->dependencies;
+		}
+
+		public function addDependency($dependency) {
+			array_push($this->dependencies, $dependency);
+			return $this;
+		}
+
+		public function setDependencies($dependencies) {
+			$this->dependencies = $dependencies;
+			return $this;
+		}
 
 		public function getTag() {
 			return $this->tag;
@@ -25,10 +38,8 @@
 
 		public function setTag($tag) {
 			$this->tag = $tag;
-
 			return $this;
 		}
-
 
 		public function getGroup() {
 			return $this->group;
@@ -36,17 +47,6 @@
 
 		public function setGroup($group) {
 			$this->group = $group;
-
-			return $this;
-		}
-
-		public function getPriority() {
-			return $this->priority;
-		}
-
-		public function setPriority($priority) {
-			$this->priority = $priority;
-
 			return $this;
 		}
 

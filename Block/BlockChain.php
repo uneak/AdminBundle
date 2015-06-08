@@ -12,10 +12,20 @@ class BlockChain {
 		$this->blocks = array();
 	}
 
+
 	public function getExternalFiles($group = null) {
 		$array = array();
 		foreach ($this->blocks as $block) {
-			$array = array_merge($array, $block['block']->getExternalFiles($group));
+			$scripts = $block['block']->getExternalFiles($group);
+			foreach ($scripts as $key => $asset) {
+				if (!isset($array[$key])) {
+					$array[$key] = $asset;
+				} elseif (is_array($array[$key])){
+					array_push($array[$key], $asset);
+				} else {
+					$array[$key] = array($array[$key], $asset);
+				}
+			}
 		}
 		return $array;
 	}
@@ -23,10 +33,21 @@ class BlockChain {
 	public function getScripts($group = null) {
 		$array = array();
 		foreach ($this->blocks as $block) {
-			$array = array_merge($array, $block['block']->getScripts($group));
+			$scripts = $block['block']->getScripts($group);
+			foreach ($scripts as $key => $asset) {
+				if (!isset($array[$key])) {
+					$array[$key] = $asset;
+				} elseif (is_array($array[$key])){
+					array_push($array[$key], $asset);
+				} else {
+					$array[$key] = array($array[$key], $asset);
+				}
+			}
 		}
 		return $array;
 	}
+
+
 
 	public function addBlock(BlockInterface $block, $id, $priority) {
 		if ($id) {

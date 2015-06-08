@@ -6,7 +6,7 @@
 	 * Time: 16:13
 	 */
 
-	namespace Uneak\AdminBundle\Block;
+	namespace Uneak\AdminBundle\Assets;
 
 	class Script extends Assets {
 
