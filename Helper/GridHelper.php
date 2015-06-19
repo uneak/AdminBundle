@@ -12,21 +12,6 @@
 		}
 
 
-		public function getGridData($entityClass, $params) {
-
-			$data = $this->gridFields($entityClass, $params);
-			$recordsFiltered = $this->gridFieldsCount($entityClass, $params);
-			$recordsTotal = $this->gridFieldsTotalCount($entityClass);
-
-			return array(
-				"data" => $data,
-				"recordsFiltered" => $recordsFiltered,
-				"recordsTotal" => $recordsTotal
-			);
-
-		}
-
-
 		public function gridFieldsTotalCount($entityClass) {
 
 			$qb = $this->em->createQueryBuilder();
@@ -43,6 +28,10 @@
 			return $qb->getQuery()->getSingleScalarResult();
 		}
 
+
+
+
+
 		public function gridFields($qb, $params) {
 
 			$select = array();
@@ -50,19 +39,24 @@
 			$select[] = 'o.id as DT_RowId';
 
 			foreach ($params['columns'] as $columns) {
-				if ($columns['data'] && substr($columns['data'], 0, 1) != '_') {
-					$select[] = 'o.' . $columns['data'] . ' as ' . $columns['data'];
+				if ($columns['name'] && substr($columns['name'], 0, 1) != '_') {
+
+					$field = $this->_getFieldName($columns['name']);
+					$fieldAlias = str_replace(".", "_", $columns['name']);
+
+					$select[] = $field . ' as ' . $fieldAlias;
 				}
 			}
 
 			$qb->select(implode(", ", $select));
 
-
-
 			foreach ($params['order'] as $order) {
 
-				if (substr($params['columns'][$order['column']]['data'], 0, 1) != '_') {
-					$orderColName = 'o.' . $params['columns'][$order['column']]['data'];
+				if (substr($params['columns'][$order['column']]['name'], 0, 1) != '_') {
+
+					$field = $this->_getFieldName($params['columns'][$order['column']]['name']);
+
+					$orderColName = $field;
 					$qb->addOrderBy($orderColName, $order['dir']);
 				}
 
@@ -75,11 +69,18 @@
 			return $qb->getQuery()->getArrayResult();
 		}
 
+
+
+
+
+
 		public function createGridQueryBuilder($entityClass, $params) {
 
 			$qb = $this->em->createQueryBuilder();
 			$qb
 				->from($entityClass, 'o');
+
+			$this->_addJoinEntity($qb, $params);
 
 			$searches = array();
 			if (isset($params['search']['value'])) {
@@ -94,13 +95,18 @@
 
 			if (isset($params['columns'])) {
 				foreach ($params['columns'] as $columns) {
-					if ($columns['data'] && substr($columns['data'], 0, 1) != '_') {
+					if ($columns['name'] && substr($columns['name'], 0, 1) != '_') {
+
+
+						$field = $this->_getFieldName($columns['name']);
+						$fieldAlias = str_replace(".", "_", $columns['name']);
+
 						for ($index = 0; $index < count($searches); $index++) {
-							$globalSearch->add($qb->expr()->like('o.' . $columns['data'], ':main_search_' . $index));
+							$globalSearch->add($qb->expr()->like($field, ':main_search_' . $index));
 						}
 						if ($columns['search']['value']) {
-							$fieldsSearch->add($qb->expr()->like('o.' . $columns['data'], ':' . $columns['data'] . '_search'));
-							$qb->setParameter($columns['data'] . '_search', '%' . $columns['search']['value'] . '%');
+							$fieldsSearch->add($qb->expr()->like($field, ':' . $fieldAlias . '_search'));
+							$qb->setParameter($fieldAlias . '_search', '%' . $columns['search']['value'] . '%');
 						}
 					}
 				}
@@ -120,5 +126,47 @@
 
 			return $qb;
 		}
+
+
+		// TODO: a optimiser
+		private function _getFieldName($fieldStr) {
+			preg_match_all("/([^\\.]+)/", $fieldStr, $matches);
+
+			if (count($matches[0]) > 1) {
+				$lastObject = "o";
+				for($i = 0; $i < count($matches[0]) - 1; $i++) {
+					$innerJoin['o_'.$matches[0][$i]] = $lastObject.'.'.$matches[0][$i];
+					$lastObject = 'o_'.$matches[0][$i];
+				}
+				$field = $lastObject.'.'.$matches[0][count($matches[0])-1];
+			} else {
+				$field = 'o.'.$fieldStr;
+			}
+
+			return $field;
+		}
+
+		private function _addJoinEntity(&$qb, $params) {
+			$innerJoin = array();
+			foreach ($params['columns'] as $columns) {
+				if ($columns['name'] && substr($columns['name'], 0, 1) != '_') {
+					$fieldStr = $columns['name'];
+					preg_match_all("/([^\\.]+)/", $fieldStr, $matches);
+
+					if (count($matches[0]) > 1) {
+						$lastObject = "o";
+						for($i = 0; $i < count($matches[0]) - 1; $i++) {
+							$innerJoin['o_'.$matches[0][$i]] = $lastObject.'.'.$matches[0][$i];
+							$lastObject = 'o_'.$matches[0][$i];
+						}
+					}
+				}
+			}
+
+			foreach ($innerJoin as $alias => $relation) {
+				$qb->innerJoin($relation, $alias);
+			}
+		}
+
 
 	}
