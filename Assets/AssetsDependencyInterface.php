@@ -7,7 +7,4 @@
 		public function getExternalFiles($group = null);
 		public function getScripts($group = null);
 
-//		public function _registerExternalFile();
-//		public function _registerScript();
-
 	}

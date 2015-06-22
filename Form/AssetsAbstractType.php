@@ -6,10 +6,7 @@
 	use Symfony\Component\Form\FormView;
 	use Uneak\AdminBundle\Assets\AssetsDependencyInterface;
 
-	abstract class AssetsAbstractType extends AbstractType implements AssetsDependencyInterface {
-
-		protected $formView;
-		protected $theme;
+	abstract class AssetsAbstractType extends AbstractType {
 
 		public function __construct(){
 		}
@@ -22,26 +19,12 @@
 			return array();
 		}
 
-		public function getFormView() {
-			return $this->formView;
-		}
-
-		public function setFormView($formView) {
-			$this->formView = $formView;
-			return $this;
-		}
-
-		public function setTheme($theme) {
-			$this->theme = $theme;
-			return $this;
-		}
-
 		public function getTheme() {
-			return $this->theme;
+			return null;
 		}
 
-		public function getExternalFiles($group = null) {
-			$externalFiles = $this->_registerExternalFile($this->formView);
+		public function getExternalFiles(FormView $formView, $group = null) {
+			$externalFiles = $this->_registerExternalFile($formView);
 			$array = array();
 			foreach ($externalFiles as $key => $externalFile) {
 				if ($group) {
@@ -55,17 +38,15 @@
 			return $array;
 		}
 
-		public function getScripts($group = null) {
-			$scripts = $this->_registerScript($this->formView);
+		public function getScripts(FormView $formView, $group = null) {
+			$scripts = $this->_registerScript($formView);
 			$array = array();
 			foreach ($scripts as $key => $script) {
 				if ($group) {
 					if ($script->getGroup() == $group) {
 						$array[$key] = $script;
-//						array_push($array, $script);
 					}
 				} else {
-//					array_push($array, $script);
 					$array[$key] = $script;
 				}
 			}

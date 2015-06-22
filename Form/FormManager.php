@@ -12,7 +12,7 @@
 	class FormManager implements AssetsDependencyInterface {
 
 
-		protected $assetsFormType = array();
+		public $assetsFormType = array();
 		protected $twigRendererEngine;
 
 		public function __construct(AssetsManager $assetsManager, TwigRendererEngine $twigRendererEngine) {
@@ -36,9 +36,16 @@
 			$innerType = $form->getConfig()->getType()->getInnerType();
 
 			if ($innerType instanceOf AssetsAbstractType) {
-				$innerType->setFormView($view);
-				$this->twigRendererEngine->setTheme($view, $innerType->getTheme());
-				array_push($this->assetsFormType, $innerType);
+
+				if ($innerType->getTheme()) {
+					$this->twigRendererEngine->setTheme($view, $innerType->getTheme());
+				}
+
+				array_push($this->assetsFormType, array(
+					'object' => $innerType,
+					'view' => $view
+				));
+
 			}
 
 			return $view;
@@ -47,15 +54,34 @@
 
 		public function getExternalFiles($group = null) {
 			$array = array();
+
 			foreach ($this->assetsFormType as $assetsDependency) {
-				$externalFiles = $assetsDependency->getExternalFiles($group);
+
+				$externalFiles = $assetsDependency['object']->getExternalFiles($assetsDependency['view'], $group);
+
 				foreach ($externalFiles as $key => $asset) {
-					if (!isset($array[$key])) {
-						$array[$key] = $asset;
-					} elseif (is_array($array[$key])){
-						array_push($array[$key], $asset);
+					if (is_array($asset)) {
+						foreach ($asset as $assetItem) {
+							if (!isset($array[$key])) {
+								$array[$key] = $assetItem;
+							} elseif (is_array($array[$key])) {
+								array_push($array[$key], $assetItem);
+							} else {
+								$prevAsset = $array[$key];
+								unset($array[$key]);
+								$array[$key] = array($prevAsset, $assetItem);
+							}
+						}
 					} else {
-						$array[$key] = array($array[$key], $asset);
+						if (!isset($array[$key])) {
+							$array[$key] = $asset;
+						} elseif (is_array($array[$key])) {
+							array_push($array[$key], $asset);
+						} else {
+							$prevAsset = $array[$key];
+							unset($array[$key]);
+							$array[$key] = array($prevAsset, $asset);
+						}
 					}
 				}
 			}
@@ -65,14 +91,32 @@
 		public function getScripts($group = null) {
 			$array = array();
 			foreach ($this->assetsFormType as $assetsDependency) {
-				$scripts = $assetsDependency->getScripts($group);
+
+				$scripts = $assetsDependency['object']->getScripts($assetsDependency['view'], $group);
 				foreach ($scripts as $key => $asset) {
-					if (!isset($array[$key])) {
-						$array[$key] = $asset;
-					} elseif (is_array($array[$key])){
-						array_push($array[$key], $asset);
+
+					if (is_array($asset)) {
+						foreach ($asset as $assetItem) {
+							if (!isset($array[$key])) {
+								$array[$key] = $assetItem;
+							} elseif (is_array($array[$key])) {
+								array_push($array[$key], $assetItem);
+							} else {
+								$prevAsset = $array[$key];
+								unset($array[$key]);
+								$array[$key] = array($prevAsset, $assetItem);
+							}
+						}
 					} else {
-						$array[$key] = array($array[$key], $asset);
+						if (!isset($array[$key])) {
+							$array[$key] = $asset;
+						} elseif (is_array($array[$key])) {
+							array_push($array[$key], $asset);
+						} else {
+							$prevAsset = $array[$key];
+							unset($array[$key]);
+							$array[$key] = array($prevAsset, $asset);
+						}
 					}
 				}
 			}
